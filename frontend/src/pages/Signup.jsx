@@ -37,62 +37,62 @@ const SignUp = () => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4">
 
-      <form
+    <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded shadow w-96"
-      >
+        className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-2xl shadow-2xl"
+    >
 
-        <h2 className="text-xl font-bold mb-4">
-          Sign Up
+        <h2 className="text-3xl font-bold mb-6 text-center text-white tracking-wide">
+        Create Account
         </h2>
 
         <input
-          name="name"
-          placeholder="Name"
-          className="border p-2 w-full mb-2"
-          onChange={handleChange}
+        name="name"
+        placeholder="Name"
+        className="w-full bg-white/10 text-white placeholder-gray-300 border border-white/20 p-3 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        onChange={handleChange}
         />
 
         <input
-          name="email"
-          placeholder="Email"
-          className="border p-2 w-full mb-2"
-          onChange={handleChange}
+        name="email"
+        placeholder="Email"
+        className="w-full bg-white/10 text-white placeholder-gray-300 border border-white/20 p-3 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        onChange={handleChange}
         />
 
         <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          className="border p-2 w-full mb-2"
-          onChange={handleChange}
+        name="password"
+        type="password"
+        placeholder="Password"
+        className="w-full bg-white/10 text-white placeholder-gray-300 border border-white/20 p-3 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        onChange={handleChange}
         />
 
         <select
-          name="role"
-          className="border p-2 w-full mb-3"
-          onChange={handleChange}
+        name="role"
+        className="w-full bg-white/10 text-white border border-white/20 p-3 rounded-lg mb-5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        onChange={handleChange}
         >
-          <option value="student">Student</option>
-          <option value="company">Company</option>
+        <option value="student" className="text-black">Student</option>
+        <option value="company" className="text-black">Company</option>
         </select>
 
         <button
-          className="bg-blue-600 text-white w-full p-2"
+        className="w-full bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white p-3 rounded-lg font-semibold transition duration-200 shadow-lg"
         >
-          Sign Up
+        Sign Up
         </button>
 
-        <p className="mt-2 text-sm">
-          Already have account?{" "}
-          <Link to="/" className="text-blue-600">
+        <p className="mt-5 text-center text-sm text-gray-300">
+        Already have an account?{" "}
+        <Link to="/" className="text-blue-400 hover:text-blue-300 font-medium">
             Sign In
-          </Link>
+        </Link>
         </p>
 
-      </form>
+    </form>
 
     </div>
   );
