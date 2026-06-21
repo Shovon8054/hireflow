@@ -134,3 +134,10 @@ export const logout = (req, res) => {
     message: "Logged out successfully",
   });
 };
+
+
+export const getMe = (req, res) => {
+  return res.status(200).json({
+    user: req.user
+  });
+};

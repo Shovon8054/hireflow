@@ -1,6 +1,9 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+
+
 dotenv.config();
 
 import authRoutes from "./routes/auth.routes.js";
@@ -14,6 +17,8 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(cookieParser());
+
 
 app.use("/api/auth", authRoutes);
 // http://localhost:8080/api/auth/signup
