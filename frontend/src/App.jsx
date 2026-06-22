@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import CompanyHome from "./pages/Company Pages/CompanyHome";
 
 import StudentProfile from "./pages/StudentProfile";
+import ShowStudentProfile from "./pages/ShowStudentProfile";
 
 
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/student/show-profile" element={<ShowStudentProfile />} />
         <Route path="/student/profile" element={<StudentProfile />} />
 
         {/* company */}

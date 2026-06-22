@@ -43,21 +43,32 @@ export const createStudentProfile = async (req, res) => {
 
 
 // ==============================================================================
+
 export const getStudentProfile = async (req, res) => {
   try {
     const userId = req.user.id;
 
     const [rows] = await db.promise().query(
-      "SELECT * FROM student_profiles WHERE user_id = ?",
+      `
+      SELECT
+        users.name,
+        student_profiles.university,
+        student_profiles.education,
+        student_profiles.skills
+      FROM users
+      LEFT JOIN student_profiles
+      ON users.id = student_profiles.user_id
+      WHERE users.id = ?
+      `,
       [userId]
     );
 
-    return res.json(rows[0]);
+    res.status(200).json(rows[0]);
 
   } catch (error) {
-    return res.status(500).json({
-      message: "Server error",
-      error: error.message,
+    res.status(500).json({
+      message: "Server Error",
+      error: error.message
     });
   }
 };
