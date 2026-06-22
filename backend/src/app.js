@@ -7,6 +7,8 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 
 import authRoutes from "./routes/auth.routes.js";
+import studentProfileRoutes from "./routes/studentRoutes/studentProfile.routes.js";
+
 
 
 const app = express();
@@ -22,6 +24,8 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 // http://localhost:8080/api/auth/signup
+
+app.use("/api/profile", studentProfileRoutes);
 
 // test route
 app.get("/", (req, res) => {

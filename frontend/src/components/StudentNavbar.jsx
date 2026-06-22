@@ -54,7 +54,7 @@ const StudentNavbar = () => {
 
             {/* Profile */}
             <Link
-            to="#"
+            to="/student/profile"
             className="flex items-center gap-3 px-3 py-2 rounded-full hover:bg-gray-100 transition-all duration-300"
             >
             <div className="w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-semibold">
