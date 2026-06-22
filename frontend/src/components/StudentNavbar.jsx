@@ -32,7 +32,7 @@ const StudentNavbar = () => {
 
             {/* Jobs */}
             <Link
-            to="/student/jobs"
+            to="#"
             className="px-4 py-2 rounded-full font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300"
             >
             Jobs
@@ -41,7 +41,7 @@ const StudentNavbar = () => {
 
             {/* Notifications */}
             <Link
-            to="/student/notifications"
+            to="#"
             className="relative p-2 rounded-full hover:bg-gray-100 transition"
             >
             <span className="text-2xl">🔔</span>
@@ -54,7 +54,7 @@ const StudentNavbar = () => {
 
             {/* Profile */}
             <Link
-            to="/student/profile"
+            to="#"
             className="flex items-center gap-3 px-3 py-2 rounded-full hover:bg-gray-100 transition-all duration-300"
             >
             <div className="w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-semibold">

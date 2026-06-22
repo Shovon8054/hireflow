@@ -23,18 +23,26 @@ const Signin = () => {
     try {
       const res = await api.post("/auth/signin", form);
 
-      console.log(res.data);
+      const user = res.data.user;
 
       alert("Login successful");
 
-    //   // optional: store user info (NOT token, because cookie is used)
-    //   localStorage.setItem("user", JSON.stringify(res.data.user));
-
-      // redirect to dashboard
-      navigate("/home");
+      // ROLE BASED REDIRECT
+      if (user.role === "student") {
+        navigate("/home");
+      } 
+      else if (user.role === "company") {
+        navigate("/company/home");
+      } 
+      else if (user.role === "admin") {
+        navigate("/admin/home");
+      } 
+      else {
+        navigate("/home");
+      }
 
     } catch (err) {
-      alert("Login failed");
+      alert(err.response?.data?.message || "Login failed");
     }
   };
 
