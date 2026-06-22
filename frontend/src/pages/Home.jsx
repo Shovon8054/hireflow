@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 
+import StudentNavbar from "../components/StudentNavbar";
+
 const Home = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
@@ -23,6 +25,7 @@ const Home = () => {
 
   return (
     <div>
+      <StudentNavbar/>
       <h1>Welcome {user.name}</h1>
       <p>Role: {user.role}</p>
     </div>
