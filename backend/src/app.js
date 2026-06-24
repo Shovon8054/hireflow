@@ -26,6 +26,8 @@ app.use("/api/auth", authRoutes);
 // http://localhost:8080/api/auth/signup
 
 app.use("/api/profile", studentProfileRoutes);
+// GET  http://localhost:8080/api/profile
+// POST http://localhost:8080/api/profile
 
 // test route
 app.get("/", (req, res) => {

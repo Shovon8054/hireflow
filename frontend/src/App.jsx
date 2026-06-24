@@ -3,8 +3,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
-import CompanyHome from "./pages/Company Pages/CompanyHome";
 
+// company
+import CompanyHome from "./pages/Company Pages/CompanyHome";
+import CompanyProfile from "./pages/Company Pages/CompanyProfile";
+import UpdateCompanyProfile from "./pages/Company Pages/UpdateCompanyProfile";
+
+// student
 import StudentProfile from "./pages/StudentProfile";
 import ShowStudentProfile from "./pages/ShowStudentProfile";
 
@@ -22,6 +27,9 @@ const App = () => {
 
         {/* company */}
         <Route path="/company/home" element={<CompanyHome />} />
+        <Route path="/company/profile" element={<CompanyProfile />} />
+        <Route path="/company/profile" element={<CompanyProfile />} />
+        <Route path="/company/profile/update" element={<UpdateCompanyProfile />} />
       </Routes>
     </BrowserRouter>
   )
