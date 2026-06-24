@@ -7,7 +7,13 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 
 import authRoutes from "./routes/auth.routes.js";
+
+// student
 import studentProfileRoutes from "./routes/studentRoutes/studentProfile.routes.js";
+
+// company
+import companyProfileRoutes from "./routes/companyRoutes/companyProfile.routes.js";
+
 
 
 
@@ -28,6 +34,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api/profile", studentProfileRoutes);
 // GET  http://localhost:8080/api/profile
 // POST http://localhost:8080/api/profile
+
+
+app.use("/api/company-profile", companyProfileRoutes);
+// GET http://localhost:8080/api/company-profile
+// POST http://localhost:8080/api/company-profile
 
 // test route
 app.get("/", (req, res) => {
