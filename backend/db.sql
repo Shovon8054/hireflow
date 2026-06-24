@@ -38,7 +38,7 @@ CREATE TABLE company_profiles (
    industry VARCHAR(100),
    description TEXT,
    website VARCHAR(255),
-   logo VARCHAR(255),
+   logo LONGBLOB,
    is_approved BOOLEAN DEFAULT FALSE,
    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
