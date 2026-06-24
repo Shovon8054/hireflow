@@ -5,40 +5,33 @@ import db from "../../config/db.js";
 // ==================================== GET ==========================================
 
 export const getCompanyProfile = async (req, res) => {
-
     try {
-
         const userId = req.user.id;
-        const [profile] = await db.promise().query(
 
-            `SELECT company_name,
-                    industry,
-                    description,
-                    website,
-                    is_approved
-             FROM company_profiles
-             WHERE user_id = ?`,
-
+        const [rows] = await db.promise().query(
+            `SELECT * FROM company_profiles WHERE user_id = ?`,
             [userId]
-
         );
 
+        const profile = rows[0];
 
-        res.status(200).json(profile[0] || null);
+        if (!profile) {
+            return res.json(null);
+        }
 
-    }
+        // Convert logo buffer to base64
+        if (profile.logo) {
+            profile.logo = profile.logo.toString("base64");
+        }
 
-    catch (error) {
+        res.status(200).json(profile);
 
+    } catch (error) {
         res.status(500).json({
             message: error.message
         });
-
     }
-
 };
-
-
 
 
 // ============================== CREATE / UPDATE ==============================
