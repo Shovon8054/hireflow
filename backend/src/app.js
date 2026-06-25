@@ -44,11 +44,10 @@ app.use("/api/company-profile", companyProfileRoutes);
 
 // job post
 app.use("/api/jobs",jobRoutes);
-
-
-
-
-
+// POST http://localhost:8080/api/jobs
+// GET http://localhost:8080/api/jobs
+// PUT http://localhost:8080/api/jobs/1
+// DELETE http://localhost:8080/api/jobs/1
 
 
 // test route
