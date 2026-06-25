@@ -189,3 +189,20 @@ export const deleteJob = async(req,res)=>{
     }
 
 };
+
+
+
+
+
+
+// =========================expired job ============================
+
+export const disableExpiredJobs=async()=>{
+    await db.promise().query(
+        `UPDATE jobs
+        SET is_active=FALSE
+        WHERE deadline < CURDATE()`
+
+    );
+
+};
