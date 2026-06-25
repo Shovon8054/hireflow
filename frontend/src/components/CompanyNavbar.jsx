@@ -42,7 +42,7 @@ const CompanyNavbar = () => {
 
               {/* Post Job */}
               <Link
-                to="#"
+                to="/company/post-job"
                 className="px-4 py-2 rounded-lg font-medium text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 transition-all duration-200"
               >
                 Post Job

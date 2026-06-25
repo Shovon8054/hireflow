@@ -4,14 +4,25 @@ import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 
-// company
+// =================================================================
+// COMPANY
+// =================================================================
 import CompanyHome from "./pages/Company Pages/CompanyHome";
 import CompanyProfile from "./pages/Company Pages/CompanyProfile";
 import UpdateCompanyProfile from "./pages/Company Pages/UpdateCompanyProfile";
+// --------job section
+import PostJob from "./pages/Company Pages/Job Section/PostJob";
+// =============================================================================
 
-// student
+
+// ========================================================================
+// STUDENT
+// ========================================================================
 import StudentProfile from "./pages/StudentProfile";
 import ShowStudentProfile from "./pages/ShowStudentProfile";
+
+// =============================================================================
+
 
 
 const App = () => {
@@ -30,6 +41,8 @@ const App = () => {
         <Route path="/company/profile" element={<CompanyProfile />} />
         <Route path="/company/profile" element={<CompanyProfile />} />
         <Route path="/company/profile/update" element={<UpdateCompanyProfile />} />
+
+        <Route path="/company/post-job" element={<PostJob />} />
       </Routes>
     </BrowserRouter>
   )

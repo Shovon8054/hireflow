@@ -67,7 +67,6 @@ const UpdateCompanyProfile = () => {
         setForm({
 
             ...form,
-
             logo: e.target.files[0]
 
         });
