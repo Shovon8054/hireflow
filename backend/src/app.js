@@ -13,6 +13,8 @@ import studentProfileRoutes from "./routes/studentRoutes/studentProfile.routes.j
 
 // company
 import companyProfileRoutes from "./routes/companyRoutes/companyProfile.routes.js";
+import jobRoutes from "./routes/companyRoutes/job.routes.js";
+
 
 
 
@@ -39,6 +41,15 @@ app.use("/api/profile", studentProfileRoutes);
 app.use("/api/company-profile", companyProfileRoutes);
 // GET http://localhost:8080/api/company-profile
 // POST http://localhost:8080/api/company-profile
+
+// job post
+app.use("/api/jobs",jobRoutes);
+
+
+
+
+
+
 
 // test route
 app.get("/", (req, res) => {
