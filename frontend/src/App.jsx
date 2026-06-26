@@ -12,6 +12,8 @@ import CompanyProfile from "./pages/Company Pages/CompanyProfile";
 import UpdateCompanyProfile from "./pages/Company Pages/UpdateCompanyProfile";
 // --------job section
 import PostJob from "./pages/Company Pages/Job Section/PostJob";
+// -----------dashboard section
+import Dashboard from "./pages/Company Pages/Dashboard-Section/Dashboard";
 // =============================================================================
 
 
@@ -29,20 +31,21 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* student */}
+        {/* --------------------------student------------------------------ */}
         <Route path="/" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/home" element={<Home />} />
         <Route path="/student/show-profile" element={<ShowStudentProfile />} />
         <Route path="/student/profile" element={<StudentProfile />} />
 
-        {/* company */}
+        {/* ---------------------------company------------------------------- */}
         <Route path="/company/home" element={<CompanyHome />} />
         <Route path="/company/profile" element={<CompanyProfile />} />
         <Route path="/company/profile" element={<CompanyProfile />} />
         <Route path="/company/profile/update" element={<UpdateCompanyProfile />} />
 
         <Route path="/company/post-job" element={<PostJob />} />
+        <Route path="/company/dashboard" element={<Dashboard />} />
       </Routes>
     </BrowserRouter>
   )

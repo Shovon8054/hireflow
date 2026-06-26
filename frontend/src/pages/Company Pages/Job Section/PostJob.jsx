@@ -35,7 +35,7 @@ const PostJob = () => {
                 form
             );
             alert("Job posted successfully");
-            navigate("/company/profile");
+            navigate("/company/dashboard");
         }
         catch(error){
             console.log(error);
