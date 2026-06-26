@@ -10,6 +10,7 @@ import authRoutes from "./routes/auth.routes.js";
 
 // student
 import studentProfileRoutes from "./routes/studentRoutes/studentProfile.routes.js";
+import studentJobRoutes from "./routes/studentRoutes/job.routes.js"
 
 // company
 import companyProfileRoutes from "./routes/companyRoutes/companyProfile.routes.js";
@@ -48,6 +49,12 @@ app.use("/api/jobs",jobRoutes);
 // GET http://localhost:8080/api/jobs
 // PUT http://localhost:8080/api/jobs/1
 // DELETE http://localhost:8080/api/jobs/1
+
+
+app.use("/api/student-jobs",studentJobRoutes);
+// http://localhost:8080/api/student-jobs/:id
+// http://localhost:8080/api/student-jobs
+
 
 
 // test route

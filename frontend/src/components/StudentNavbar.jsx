@@ -35,7 +35,7 @@ const StudentNavbar = () => {
 
                             {/* Jobs */}
                             <Link
-                                to="#"
+                                to="/student/job"
                                 className="px-4 py-2 rounded-lg font-medium text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 transition-all duration-200"
                             >
                                 Jobs
@@ -101,7 +101,7 @@ const StudentNavbar = () => {
                         
                         {/* Jobs */}
                         <Link
-                            to="#"
+                            to="/student/job"
                             className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 transition-all duration-200"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >

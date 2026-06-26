@@ -12,7 +12,7 @@ import CompanyProfile from "./pages/Company Pages/CompanyProfile";
 import UpdateCompanyProfile from "./pages/Company Pages/UpdateCompanyProfile";
 // --------job section
 import PostJob from "./pages/Company Pages/Job Section/PostJob";
-// -----------dashboard section
+// -------dashboard section
 import Dashboard from "./pages/Company Pages/Dashboard-Section/Dashboard";
 // =============================================================================
 
@@ -22,6 +22,7 @@ import Dashboard from "./pages/Company Pages/Dashboard-Section/Dashboard";
 // ========================================================================
 import StudentProfile from "./pages/StudentProfile";
 import ShowStudentProfile from "./pages/ShowStudentProfile";
+import Job from "./pages/student-pages/Job";
 
 // =============================================================================
 
@@ -31,12 +32,15 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* --------------------------student------------------------------ */}
+        
         <Route path="/" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
+
+        {/* --------------------------student------------------------------ */}
         <Route path="/home" element={<Home />} />
         <Route path="/student/show-profile" element={<ShowStudentProfile />} />
         <Route path="/student/profile" element={<StudentProfile />} />
+        <Route path="/student/job" element={<Job/>} />
 
         {/* ---------------------------company------------------------------- */}
         <Route path="/company/home" element={<CompanyHome />} />
