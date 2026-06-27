@@ -23,7 +23,7 @@ import Dashboard from "./pages/Company Pages/Dashboard-Section/Dashboard";
 import StudentProfile from "./pages/StudentProfile";
 import ShowStudentProfile from "./pages/ShowStudentProfile";
 import Job from "./pages/student-pages/Job";
-
+import JobDetails from "./pages/student-pages/JobDetails";
 // =============================================================================
 
 
@@ -41,6 +41,7 @@ const App = () => {
         <Route path="/student/show-profile" element={<ShowStudentProfile />} />
         <Route path="/student/profile" element={<StudentProfile />} />
         <Route path="/student/job" element={<Job/>} />
+        <Route path="/student/jobs/:id" element={<JobDetails/>} />
 
         {/* ---------------------------company------------------------------- */}
         <Route path="/company/home" element={<CompanyHome />} />
