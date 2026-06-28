@@ -16,6 +16,8 @@ import studentJobRoutes from "./routes/studentRoutes/job.routes.js"
 import companyProfileRoutes from "./routes/companyRoutes/companyProfile.routes.js";
 import jobRoutes from "./routes/companyRoutes/job.routes.js";
 
+// application
+import applicationRoutes from "./routes/application/application.routes.js";
 
 
 
@@ -55,7 +57,8 @@ app.use("/api/student-jobs",studentJobRoutes);
 // http://localhost:8080/api/student-jobs/:id
 // http://localhost:8080/api/student-jobs
 
-
+// ============================================application===================================
+app.use("/api/applications", applicationRoutes);
 
 // test route
 app.get("/", (req, res) => {

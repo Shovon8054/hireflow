@@ -33,7 +33,7 @@ const Job = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
     
     {/* Navbar Section */}
-      <div className="sticky top-0 z-50">
+    <div className="sticky top-0 z-50">
         <StudentNavbar />
     </div>
 

@@ -13,6 +13,8 @@ const JobDetails = () => {
     const { id } = useParams();
 
     const [job, setJob] = useState(null);
+    const [resume, setResume] = useState(null);
+    const [loading, setLoading] = useState(false);
 
 
 
@@ -41,6 +43,55 @@ const JobDetails = () => {
         return <h1>Loading...</h1>;
 
     }
+
+
+    //================================= handle apply========================
+    const handleApply = async () => {
+
+        if (!resume) {
+
+            alert("Please upload your resume.");
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const formData = new FormData();
+            formData.append("job_id", job.id);
+            formData.append("resume", resume);
+
+            const res = await api.post(
+                "/applications",
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
+                }
+            );
+            alert(res.data.message);
+            setResume(null);
+            navigate("/student/job");
+
+        }
+
+        catch (err) {
+            if (err.response) {
+                alert(err.response.data.message);
+            }
+            else {
+                alert("Something went wrong.");
+
+            }
+
+        }
+
+        finally {
+            setLoading(false);
+
+        }
+
+    };
 
     return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
@@ -201,11 +252,26 @@ const JobDetails = () => {
 
 
             {/* -------------------------apply button--------------------------- */}
-            <button 
-            className="w-full sm:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg"
-            >
-            Apply Now
-            </button>
+            <div className="flex items-center gap-3 mt-4">
+                <input
+                    type="file"
+
+                    accept=".pdf"
+
+                    onChange={(e) => setResume(e.target.files[0])}
+                />
+
+                <button
+
+                    onClick={handleApply}
+                    disabled={loading}
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
+                >
+                    {loading ? "Applying..." : "Apply"}
+
+                </button>
+
+            </div>
         </div>
         </div>
     </div>
