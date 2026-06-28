@@ -1,95 +1,69 @@
-give me a a description to add in guthub.. HireFlow – Entry-Level Job Portal
+# HireFlow – Entry-Level Job Portal
 
-👥 Roles
+HireFlow is a full-stack job portal designed to connect entry-level job seekers with companies through a modern recruitment platform. It features secure role-based authentication, job management, application tracking, real-time notifications, and an admin dashboard for platform moderation.
 
-🧑‍🎓 Student
-Create profile
-Upload resume
-Apply for jobs
-Track application status
-Receive notifications (real-time + email)
-Save/bookmark jobs
+## 🚀 Features
 
-🏢 Company
-Create company profile
-Post/manage jobs
-View applicants
-Shortlist / reject candidates
-Get notifications (real-time + email)
+### 👨‍🎓 Student
 
-🛡️ Admin
-Approve companies
-Moderate jobs
-Block users
-View analytics dashboard
+* Create and manage profile
+* Upload resume (PDF)
+* Browse and filter jobs
+* Apply for jobs
+* Track application status
+* Save/bookmark jobs
+* Receive real-time and email notifications
 
-⚙️ 🚀 15 Industry-Level Features
-1. 🔐 Authentication + JWT + RBAC
-Signup/Login system
-3 roles (student, company, admin)
-Protected routes
-2. 👤 Profile Management System
-Student profile: skills, education, resume
-Company profile: logo, description, industry
-3. 📌 Job Posting & Deadline System
-Companies can create, edit, and delete job posts
-Each job includes a deadline (expiry date)
-Automatically disables expired jobs after deadline
-Fields: title, skills, salary, location, deadline
-4. 📃 Job Listing + Advanced Filtering
-Filter by:
-skills match
-location
-entry-level only
-salary range
-5. 📥 Application System
-Apply with resume 
-Prevent duplicate applications
-Store application history
-6. 📊 Application Management System
-Company:
-View applicants
-Shortlist / reject / interview
-Student:
-View application status timeline
-7. 🔔 Real-Time Notification System (Socket.io + DB)
-Instant notifications using Socket.io
-Store notifications in database for history
-Trigger on job post, application, status update, and approvals
-Track read/unread status for users
-8. 🛡️ Admin Panel
-Approve/reject companies
-Delete job posts
-Block/unblock users
-9. 📈 Dashboard Analytics
-Admin view:
-Total jobs
-Total applications
-Active companies
-Pending approvals
-10. 📧 Email Notification System ⭐ (NEW)
-Email on:
-shortlisted
-rejected
-interview
-Use Nodemailer / SendGrid
-Works with status updates
-11. 🧑‍⚖️ Admin Hierarchy System
-HireFlow supports two admin levels:
-👑 Super Admin
-Can create other admins
-Full control of system
-Can manage users, companies, and jobs
-🛡️ Sub Admin
-Created by Super Admin
-Can approve companies, moderate jobs, and block users
-Cannot create or manage admins
-⚙️ Rule
-Only Super Admin can add or manage admins.
+### 🏢 Company
 
+* Create company profile
+* Post, edit, and manage job listings
+* View applicants
+* Shortlist, reject, or schedule interviews
+* Receive real-time and email notifications
 
+### 🛡️ Admin
 
-14. ⭐ Save / Bookmark Jobs
-Students can save jobs
-“Saved Jobs” page
-Remove anytime
+* Approve or reject company registrations
+* Moderate job postings
+* Block or unblock users
+* View analytics dashboard
+* Two-level admin hierarchy (Super Admin & Sub Admin)
+
+## ✨ Key Features
+
+* 🔐 JWT Authentication & Role-Based Access Control (Student, Company, Admin)
+* 👤 Student & Company Profile Management
+* 📌 Job Posting with Automatic Deadline Expiry
+* 🔍 Advanced Job Search & Filtering
+* 📥 Resume-Based Job Application System
+* 📊 Application Tracking & Status Management
+* 🔔 Real-Time Notifications using Socket.io
+* 📧 Email Notifications with Nodemailer
+* ⭐ Save & Bookmark Jobs
+* 📈 Admin Analytics Dashboard
+* 🧑‍⚖️ Super Admin & Sub Admin Hierarchy
+* 🚫 Company Approval & User Moderation
+
+## 🛠️ Tech Stack
+
+**Frontend**
+
+* React.js
+* React Router
+* Tailwind CSS
+* Axios
+
+**Backend**
+
+* Node.js
+* Express.js
+* MySQL
+* JWT Authentication
+* Multer
+* Socket.io
+* Nodemailer
+
+## 🎯 Purpose
+
+HireFlow demonstrates the implementation of a production-style recruitment platform with secure authentication, role-based authorization, file uploads, real-time communication, email services, and a scalable backend architecture. It is designed as a portfolio project showcasing full-stack web development skills using the MERN ecosystem (with MySQL as the database).
