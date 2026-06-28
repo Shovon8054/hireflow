@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import api from "../../../services/api";
 import CompanyNavbar from "../../../components/CompanyNavbar";
 import JobPostCard from "../../../components/company-job-post/JobPostCard";
 
 const Dashboard = () => {
+
+    const navigate = useNavigate();
 
     const [jobs, setJobs] = useState([]);
 

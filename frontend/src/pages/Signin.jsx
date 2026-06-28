@@ -32,7 +32,7 @@ const Signin = () => {
         navigate("/home");
       } 
       else if (user.role === "company") {
-        navigate("/company/home");
+        navigate("/company/dashboard");
       } 
       else if (user.role === "admin") {
         navigate("/admin/home");

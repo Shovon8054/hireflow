@@ -23,7 +23,7 @@ const CompanyNavbar = () => {
 
             {/* Logo */}
             <Link
-              to="/company/home"
+              to="/company/dashboard"
               className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent tracking-tight hover:scale-105 transition-transform duration-300 flex-shrink-0"
             >
               HireFlow
