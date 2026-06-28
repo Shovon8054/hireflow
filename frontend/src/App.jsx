@@ -14,6 +14,8 @@ import UpdateCompanyProfile from "./pages/Company Pages/UpdateCompanyProfile";
 import PostJob from "./pages/Company Pages/Job Section/PostJob";
 // -------dashboard section
 import Dashboard from "./pages/Company Pages/Dashboard-Section/Dashboard";
+
+import Applicants from "./pages/Company Pages/applicants/Applicants";
 // =============================================================================
 
 
@@ -51,6 +53,8 @@ const App = () => {
 
         <Route path="/company/post-job" element={<PostJob />} />
         <Route path="/company/dashboard" element={<Dashboard />} />
+
+        <Route path="/company/applicants" element={<Applicants />} />
       </Routes>
     </BrowserRouter>
   )

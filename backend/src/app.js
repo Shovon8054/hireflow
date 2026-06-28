@@ -19,6 +19,8 @@ import jobRoutes from "./routes/companyRoutes/job.routes.js";
 // application
 import applicationRoutes from "./routes/application/application.routes.js";
 
+// applicants
+import companyApplicantRoutes from "./routes/application/applicants.routes.js";
 
 
 
@@ -59,6 +61,14 @@ app.use("/api/student-jobs",studentJobRoutes);
 
 // ============================================application===================================
 app.use("/api/applications", applicationRoutes);
+
+
+
+// ==================applicants================
+app.use("/api/applicants", companyApplicantRoutes);
+
+
+
 
 // test route
 app.get("/", (req, res) => {
