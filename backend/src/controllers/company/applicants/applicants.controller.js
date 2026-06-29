@@ -123,9 +123,7 @@ export const downloadResume = async (req, res) => {
 export const updateApplicationStatus = async (req, res) => {
 
     try {
-
         const { status } = req.body;
-
         const id = req.params.id;
 
         await db.promise().query(
@@ -137,13 +135,11 @@ export const updateApplicationStatus = async (req, res) => {
             `,
 
             [status, id]
-
         );
 
         res.json({
 
             message: "Status updated successfully."
-
         });
 
     }

@@ -26,6 +26,8 @@ import StudentProfile from "./pages/StudentProfile";
 import ShowStudentProfile from "./pages/ShowStudentProfile";
 import Job from "./pages/student-pages/Job";
 import JobDetails from "./pages/student-pages/JobDetails";
+import Chatbot from "./pages/student-pages/Chatbot";
+import ApplicationHistory from "./pages/student-pages/ApplicationHistory";
 // =============================================================================
 
 
@@ -39,13 +41,19 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
 
         {/* --------------------------student------------------------------ */}
+        {/* -------------------------------------------------------------------- */}
         <Route path="/home" element={<Home />} />
         <Route path="/student/show-profile" element={<ShowStudentProfile />} />
         <Route path="/student/profile" element={<StudentProfile />} />
         <Route path="/student/job" element={<Job/>} />
         <Route path="/student/jobs/:id" element={<JobDetails/>} />
+        <Route path="/student/chatbot" element={<Chatbot/>} />
+        <Route path="/student/application-history" element={<ApplicationHistory/>} />
+
+
 
         {/* ---------------------------company------------------------------- */}
+        {/* -------------------------------------------------------------------- */}
         <Route path="/company/home" element={<CompanyHome />} />
         <Route path="/company/profile" element={<CompanyProfile />} />
         <Route path="/company/profile" element={<CompanyProfile />} />

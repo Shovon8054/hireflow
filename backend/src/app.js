@@ -22,6 +22,10 @@ import applicationRoutes from "./routes/application/application.routes.js";
 // applicants
 import companyApplicantRoutes from "./routes/application/applicants.routes.js";
 
+// application history
+import studentApplicationRoutes from "./routes/application-history/studentApplication.routes.js";
+
+
 
 
 const app = express();
@@ -66,8 +70,12 @@ app.use("/api/applications", applicationRoutes);
 
 // ==================applicants================
 app.use("/api/applicants", companyApplicantRoutes);
+// /api/applicants
+// /api/applicants/resume/:id
 
 
+// application history
+app.use("/api/my-applications", studentApplicationRoutes);
 
 
 // test route
