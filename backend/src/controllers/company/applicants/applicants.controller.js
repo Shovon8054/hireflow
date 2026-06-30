@@ -3,6 +3,8 @@ import { createNotification } from "../../student/notification/notification.cont
 
 import { getIO } from "../../../config/socket.js";
 
+import { sendStatusEmail } from "../../../utils/email.js";
+
 
 // ============================get applicants details based on job they applied====================
 export const getCompanyApplicants = async (req, res) => {
@@ -175,6 +177,34 @@ export const updateApplicationStatus = async (req, res) => {
             title,
             message,
             "status"
+        );
+
+        // Get student information
+        const [[student]] = await db.promise().query(
+            `
+            SELECT users.name,
+                users.email,
+                jobs.title AS job_title
+
+            FROM applications
+
+            JOIN users
+            ON applications.student_id = users.id
+
+            JOIN jobs
+            ON applications.job_id = jobs.id
+
+            WHERE applications.id = ?
+            `,
+            [applicationId]
+        );
+
+        // Send email
+        await sendStatusEmail(
+            student.email,
+            student.name,
+            status,
+            student.job_title
         );
 
         // Send real-time notification
