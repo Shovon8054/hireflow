@@ -51,7 +51,7 @@ const StudentNavbar = () => {
 
                             {/* Notifications */}
                             <Link
-                                to="#"
+                                to="/student/notification"
                                 className="relative p-2.5 rounded-lg hover:bg-slate-100 transition-all duration-200"
                             >
                                 <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

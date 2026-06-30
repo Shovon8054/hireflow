@@ -25,6 +25,9 @@ import companyApplicantRoutes from "./routes/application/applicants.routes.js";
 // application history
 import studentApplicationRoutes from "./routes/application-history/studentApplication.routes.js";
 
+// notification
+import notificationRoutes from "./routes/notification/notification.routes.js";
+
 
 
 
@@ -76,6 +79,14 @@ app.use("/api/applicants", companyApplicantRoutes);
 
 // application history
 app.use("/api/my-applications", studentApplicationRoutes);
+
+
+// notification
+app.use("/api/notifications", notificationRoutes);
+// http://localhost:8080/api/notifications
+// http://localhost:8080/api/notifications/unread-count
+// http://localhost:8080/api/notifications/:id/read
+// http://localhost:8080/api/notifications/read-all
 
 
 // test route

@@ -28,6 +28,9 @@ import Job from "./pages/student-pages/Job";
 import JobDetails from "./pages/student-pages/JobDetails";
 import Chatbot from "./pages/student-pages/Chatbot";
 import ApplicationHistory from "./pages/student-pages/ApplicationHistory";
+
+// notification
+import Notification from "./pages/student-pages/Notification";
 // =============================================================================
 
 
@@ -49,6 +52,8 @@ const App = () => {
         <Route path="/student/jobs/:id" element={<JobDetails/>} />
         <Route path="/student/chatbot" element={<Chatbot/>} />
         <Route path="/student/application-history" element={<ApplicationHistory/>} />
+
+        <Route path="/student/notification" element={<Notification/>} />
 
 
 

@@ -29,7 +29,7 @@ const Signin = () => {
 
       // ROLE BASED REDIRECT
       if (user.role === "student") {
-        navigate("/home");
+        navigate("/student/job");
       } 
       else if (user.role === "company") {
         navigate("/company/dashboard");
