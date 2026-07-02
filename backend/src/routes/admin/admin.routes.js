@@ -16,6 +16,8 @@ import {
     deleteSubAdmin,
 } from "../../controllers/admin/adminController.js";
 
+import { getDashboardStats } from "../../controllers/admin/dashboardController.js";
+
 const router = express.Router();
 
 
@@ -88,6 +90,15 @@ router.delete(
     authorizeRoles("admin"),
     isSuperAdmin,
     deleteSubAdmin
+);
+
+
+// get dashboard stats
+router.get(
+    "/dashboard",
+    protect,
+    authorizeRoles("admin"),
+    getDashboardStats
 );
 
 export default router;
