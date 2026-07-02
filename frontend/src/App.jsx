@@ -34,6 +34,14 @@ import Notification from "./pages/student-pages/Notification";
 // =============================================================================
 
 
+// ========================================================================
+// ADMIN
+// ========================================================================
+import AdminDashboard from "./pages/admin/AdminDashboard";
+
+
+
+
 
 const App = () => {
   return (
@@ -68,6 +76,10 @@ const App = () => {
         <Route path="/company/dashboard" element={<Dashboard />} />
 
         <Route path="/company/applicants" element={<Applicants />} />
+
+        {/* ---------------------------company------------------------------- */}
+        {/* -------------------------------------------------------------------- */}
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
     </BrowserRouter>
   )
