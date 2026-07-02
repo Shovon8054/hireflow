@@ -38,7 +38,9 @@ import Notification from "./pages/student-pages/Notification";
 // ADMIN
 // ========================================================================
 import AdminDashboard from "./pages/admin/AdminDashboard";
-
+import Users from "./pages/admin/Users";
+import Companies from "./pages/admin/Companies";
+import CreateAdmin from "./pages/admin/CreateAdmin";
 
 
 
@@ -80,6 +82,9 @@ const App = () => {
         {/* ---------------------------company------------------------------- */}
         {/* -------------------------------------------------------------------- */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<Users />} />
+        <Route path="/admin/companies" element={<Companies />} />
+        <Route path="/admin/create-admin" element={<CreateAdmin />} />
       </Routes>
     </BrowserRouter>
   )

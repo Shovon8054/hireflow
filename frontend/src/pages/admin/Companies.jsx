@@ -1,13 +1,12 @@
 import AdminNavbar from "../../components/AdminNavbar";
 
-const AdminDashboard = () => {
+const Companies = () => {
   return (
     <div>
         <AdminNavbar/>
-      hi admin 
+      hello companies
     </div>
   )
 }
 
-export default AdminDashboard
-
+export default Companies
