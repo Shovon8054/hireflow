@@ -2,27 +2,74 @@ import db from "../../config/db.js";
 
 // ========================= GET ALL JOBS =========================
 export const getAllJobs = async (req, res) => {
-    try{
-        const [jobs] = await db.promise().query(
-            `SELECT *
+    try {
+
+        const {
+            skills,
+            location,
+            entryLevel,
+            minSalary,
+            maxSalary
+        } = req.query;
+
+        let sql = `
+            SELECT *
             FROM jobs
             WHERE is_active = TRUE
-            ORDER BY created_at DESC`
-        );
-        res.status(200).json(jobs);
-    }
+        `;
 
-    catch(error){
+        const values = [];
+
+        // Filter by Skills
+        if (skills) {
+            sql += ` AND skills LIKE ?`;
+            values.push(`%${skills}%`);
+        }
+
+        // Filter by Location
+        if (location) {
+            sql += ` AND location LIKE ?`;
+            values.push(`%${location}%`);
+        }
+
+        // Filter Entry Level
+        if (entryLevel === "true") {
+            sql += ` AND is_entry_level = TRUE`;
+        }
+
+        // Minimum Salary
+        if (minSalary) {
+            sql += ` AND salary_min >= ?`;
+            values.push(minSalary);
+        }
+
+        // Maximum Salary
+        if (maxSalary) {
+            sql += ` AND salary_max <= ?`;
+            values.push(maxSalary);
+        }
+
+        sql += ` ORDER BY created_at DESC`;
+
+        const [jobs] = await db.promise().query(sql, values);
+
+        res.status(200).json(jobs);
+
+    } catch (error) {
+
+        console.error(error);
+
         res.status(500).json({
-            message:error.message
+            message: error.message
         });
+
     }
 };
 
 
 
 
-// ========================= GET JOB BY ID =========================
+// ========================= GET single job=========================
 
 
 export const getJobById = async(req,res)=>{
