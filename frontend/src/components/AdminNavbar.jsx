@@ -49,13 +49,6 @@ const AdminNavbar = () => {
                             </Link>
 
                             <Link
-                                to="/admin/companies"
-                                className="px-4 py-2 rounded-lg font-medium text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 transition-all duration-200"
-                            >
-                                Companies
-                            </Link>
-
-                            <Link
                                 to="/admin/create-admin"
                                 className="px-4 py-2 rounded-lg font-medium text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 transition-all duration-200"
                             >
@@ -110,13 +103,6 @@ const AdminNavbar = () => {
                             Users
                         </Link>
 
-                        <Link
-                            to="/admin/companies"
-                            className="block px-4 py-3 rounded-lg font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 transition-all duration-200"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            Companies
-                        </Link>
 
                         <Link
                             to="/admin/create-admin"

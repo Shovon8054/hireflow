@@ -39,7 +39,6 @@ import Notification from "./pages/student-pages/Notification";
 // ========================================================================
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Users from "./pages/admin/Users";
-import Companies from "./pages/admin/Companies";
 import CreateAdmin from "./pages/admin/CreateAdmin";
 
 
@@ -83,7 +82,6 @@ const App = () => {
         {/* -------------------------------------------------------------------- */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<Users />} />
-        <Route path="/admin/companies" element={<Companies />} />
         <Route path="/admin/create-admin" element={<CreateAdmin />} />
       </Routes>
     </BrowserRouter>
