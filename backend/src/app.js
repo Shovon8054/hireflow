@@ -28,7 +28,8 @@ import studentApplicationRoutes from "./routes/application-history/studentApplic
 // notification
 import notificationRoutes from "./routes/notification/notification.routes.js";
 
-
+// admin
+import adminRoutes from "./routes/admin/admin.routes.js";
 
 
 const app = express();
@@ -88,6 +89,9 @@ app.use("/api/notifications", notificationRoutes);
 // http://localhost:8080/api/notifications/:id/read
 // http://localhost:8080/api/notifications/read-all
 
+
+// ====================================================admin=====================================
+app.use("/api/admin", adminRoutes);
 
 // test route
 app.get("/", (req, res) => {
