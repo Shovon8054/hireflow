@@ -2,6 +2,8 @@ import bcrypt from "bcryptjs";
 import db from "../config/db.js";
 import generateToken from "../utils/jwt.js";
 
+const isProduction = process.env.NODE_ENV === "production" || (process.env.FRONTEND_URL && !process.env.FRONTEND_URL.includes("localhost"));
+
 
 // ================================================signin================================================
 export const signup = async (req, res) => {
@@ -45,8 +47,8 @@ export const signup = async (req, res) => {
     // 6. SET COOKIE 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, 
-      sameSite: "lax",
+      secure: isProduction, 
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -102,8 +104,8 @@ export const signin = async (req, res) => {
     // 4. set cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -126,8 +128,8 @@ export const signin = async (req, res) => {
 export const logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    sameSite: "lax",
-    secure: false,
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
   });
 
   return res.status(200).json({
