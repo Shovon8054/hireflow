@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import api from "../../../services/api";
 import CompanyNavbar from "../../../components/CompanyNavbar";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
+
 const Applicants = () => {
 
     const [jobs, setJobs] = useState([]);
@@ -237,7 +239,7 @@ const Applicants = () => {
                                                             </td>
                                                             <td className="px-6 py-4">
                                                                 <a
-                                                                    href={`http://localhost:8080/api/applicants/resume/${applicant.resume_id}`}
+                                                                    href={`${API_URL}/applicants/resume/${applicant.resume_id}`}
                                                                     target="_blank"
                                                                     rel="noreferrer"
                                                                     className="
@@ -323,7 +325,7 @@ const Applicants = () => {
                                                         </div>
                                                         <div>
                                                             <a
-                                                                href={`http://localhost:8080/api/applicants/resume/${applicant.resume_id}`}
+                                                                href={`${API_URL}/applicants/resume/${applicant.resume_id}`}
                                                                 target="_blank"
                                                                 rel="noreferrer"
                                                                 className="
