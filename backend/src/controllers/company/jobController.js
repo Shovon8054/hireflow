@@ -18,6 +18,9 @@ export const createJob = async (req,res)=>{
         } = req.body;
 
 
+        const finalSalaryMin = (salary_min === "" || salary_min === undefined || salary_min === null) ? null : salary_min;
+        const finalSalaryMax = (salary_max === "" || salary_max === undefined || salary_max === null) ? null : salary_max;
+
         await db.promise().query(
 
             `INSERT INTO jobs(
@@ -39,8 +42,8 @@ export const createJob = async (req,res)=>{
                 description,
                 skills,
                 location,
-                salary_min,
-                salary_max,
+                finalSalaryMin,
+                finalSalaryMax,
                 deadline
             ]
 
@@ -118,6 +121,9 @@ export const updateJob = async(req,res)=>{
         } = req.body;
 
 
+        const finalSalaryMin = (salary_min === "" || salary_min === undefined || salary_min === null) ? null : salary_min;
+        const finalSalaryMax = (salary_max === "" || salary_max === undefined || salary_max === null) ? null : salary_max;
+
         await db.promise().query(
 
             `UPDATE jobs
@@ -137,8 +143,8 @@ export const updateJob = async(req,res)=>{
                 description,
                 skills,
                 location,
-                salary_min,
-                salary_max,
+                finalSalaryMin,
+                finalSalaryMax,
                 deadline,
                 id
 
