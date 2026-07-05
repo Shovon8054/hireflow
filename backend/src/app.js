@@ -34,8 +34,13 @@ import adminRoutes from "./routes/admin/admin.routes.js";
 
 const app = express();
 
+const frontendUrl = process.env.FRONTEND_URL;
+const originOption = frontendUrl 
+  ? [frontendUrl.replace(/\/$/, ""), "http://localhost:5173"]
+  : "http://localhost:5173";
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: originOption,
     credentials: true
 }));
 
