@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://hireflow-1-t7t1.onrender.com/api/:path*"
+      "destination": "https://hireflow-1-t7tl.onrender.com/api/:path*"
     }
   ]
 }
