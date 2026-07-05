@@ -34,13 +34,28 @@ import adminRoutes from "./routes/admin/admin.routes.js";
 
 const app = express();
 
-const frontendUrl = process.env.FRONTEND_URL;
-const originOption = frontendUrl 
-  ? [frontendUrl.replace(/\/$/, ""), "http://localhost:5173"]
-  : "http://localhost:5173";
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000"
+];
+
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL.replace(/\/$/, ""));
+}
 
 app.use(cors({
-    origin: originOption,
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps, postman, curl)
+        if (!origin) return callback(null, true);
+        
+        const isAllowed = allowedOrigins.includes(origin) || origin.endsWith(".vercel.app");
+        
+        if (isAllowed) {
+            callback(null, true);
+        } else {
+            callback(new Error(`Origin ${origin} not allowed by CORS`));
+        }
+    },
     credentials: true
 }));
 
