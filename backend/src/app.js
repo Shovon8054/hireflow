@@ -34,30 +34,29 @@ import adminRoutes from "./routes/admin/admin.routes.js";
 
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:3000"
-];
+// ─── CORS: manually inject headers so preflight always works ───────────────
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const isAllowed =
+    !origin ||
+    origin.startsWith("http://localhost") ||
+    origin.endsWith(".vercel.app") ||
+    (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL.replace(/\/$/, ""));
 
-if (process.env.FRONTEND_URL) {
-  allowedOrigins.push(process.env.FRONTEND_URL.replace(/\/$/, ""));
-}
+  if (isAllowed) {
+    res.setHeader("Access-Control-Allow-Origin", origin || "*");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie");
+  }
 
-app.use(cors({
-    origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps, postman, curl)
-        if (!origin) return callback(null, true);
-        
-        const isAllowed = allowedOrigins.includes(origin) || origin.endsWith(".vercel.app");
-        
-        if (isAllowed) {
-            callback(null, true);
-        } else {
-            callback(new Error(`Origin ${origin} not allowed by CORS`));
-        }
-    },
-    credentials: true
-}));
+  // Handle OPTIONS preflight immediately
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
 
 app.use(express.json());
 app.use(cookieParser());
