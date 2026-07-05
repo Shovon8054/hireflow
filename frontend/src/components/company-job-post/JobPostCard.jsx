@@ -26,7 +26,7 @@ const JobPostCard = ({ job, fetchJobs }) => {
 
     return (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 hover:shadow-md transition-all duration-300 p-6">
-            
+
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
                 <div className="flex-1 min-w-0">
@@ -43,7 +43,7 @@ const JobPostCard = ({ job, fetchJobs }) => {
                         </span>
                     </div>
                 </div>
-                
+
                 {/* Status Badge */}
                 <div className="flex-shrink-0">
                     {job.is_active ? (
@@ -62,7 +62,7 @@ const JobPostCard = ({ job, fetchJobs }) => {
 
             {/* Details Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 pt-4 border-t border-slate-100">
-                
+
                 {/* Skills */}
                 <div className="space-y-1.5">
                     <div className="flex items-center gap-1.5">
@@ -162,7 +162,7 @@ const JobPostCard = ({ job, fetchJobs }) => {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-2 mt-6 pt-4 border-t border-slate-100">
-                <Link
+                {/* <Link
                     to={`#`}
                     className="px-5 py-2.5 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 hover:shadow-md transition-all duration-200 flex items-center gap-2"
                 >
@@ -170,7 +170,7 @@ const JobPostCard = ({ job, fetchJobs }) => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                     </svg>
                     Edit
-                </Link>
+                </Link> */}
 
                 <button
                     onClick={handleDelete}
@@ -182,9 +182,9 @@ const JobPostCard = ({ job, fetchJobs }) => {
                     Delete
                 </button>
 
-                
 
-                
+
+
 
                 {/* ==========================view applicants================================= */}
                 {/* <Link
