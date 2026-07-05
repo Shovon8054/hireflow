@@ -38,6 +38,19 @@ const runMigrations = async (connection) => {
     } else {
       console.log("Migration: Schema already exists. Skipping.");
     }
+
+    // Ensure Super Admin exists
+    const [admins] = await connection.promise().query("SELECT id FROM users WHERE email = 'admin@hireflow.com'");
+    if (admins.length === 0) {
+      console.log("Migration: Super Admin not found. Creating default admin...");
+      const bcrypt = await import("bcryptjs");
+      const hashedPassword = await bcrypt.default.hash("admin123", 10);
+      await connection.promise().query(
+        "INSERT INTO users (name, email, password, role, admin_type) VALUES (?, ?, ?, ?, ?)",
+        ["Super Admin", "admin@hireflow.com", hashedPassword, "admin", "SUPER_ADMIN"]
+      );
+      console.log("Migration: Default Super Admin created (admin@hireflow.com / admin123)!");
+    }
   } catch (err) {
     console.error("Migration failed:", err.message);
   }
