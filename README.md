@@ -2,16 +2,6 @@
 
 HireFlow is a full-stack recruitment platform that connects job seekers with employers through a modern, role-based hiring workflow. The application enables candidates to build professional profiles, apply for jobs, track application progress, and receive real-time notifications, while recruiters can manage job postings, review applicants, and communicate hiring decisions. An administrative dashboard provides moderation and platform management capabilities.
 
----
-
-## Live Demo
-
-| Service     | URL                                        |
-| ----------- | ------------------------------------------ |
-| Frontend    | https://hireflow-henna-seven.vercel.app    |
-| Backend API | https://hireflow-backend-rlzu.onrender.com |
-
----
 
 ## Features
 
