@@ -19,9 +19,9 @@ const CompanyProfile = () => {
 
     useEffect(() => {
         const fetchProfile = async () => {
-            try{
+            try {
                 const res = await api.get("/company-profile");
-                if(res.data){
+                if (res.data) {
                     setProfile({
                         company_name: res.data.company_name || "Company Name",
                         industry: res.data.industry || "Not Added",
@@ -32,7 +32,7 @@ const CompanyProfile = () => {
                     });
                 }
             }
-            catch(err){
+            catch (err) {
                 console.log(err);
             }
         };
@@ -173,17 +173,6 @@ const CompanyProfile = () => {
                                         Status
                                     </h3>
                                 </div>
-                                {profile.is_approved ? (
-                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                        Approved
-                                    </span>
-                                ) : (
-                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-medium">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                        Pending Approval
-                                    </span>
-                                )}
                             </div>
 
                             {/* Website */}
