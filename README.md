@@ -1,100 +1,189 @@
-# HireFlow — Production-Grade Talent Acquisition Portal
+# HireFlow
 
-HireFlow is a robust, full-stack recruitment platform engineered to connect emerging professionals with companies. Built on a modern decoupled architecture using the **PERN ecosystem (MySQL, Express.js, React, Node.js)**, it features role-based access control, real-time event notifications, automated workflows, and comprehensive administrative moderation tools.
-
-🚀 **Live Demos**:
-- **Frontend App**: [hireflow-henna-seven.vercel.app](https://hireflow-henna-seven.vercel.app)
-- **Backend API**: [hireflow-backend-rlzu.onrender.com](https://hireflow-backend-rlzu.onrender.com)
+HireFlow is a full-stack recruitment platform that connects job seekers with employers through a modern, role-based hiring workflow. The application enables candidates to build professional profiles, apply for jobs, track application progress, and receive real-time notifications, while recruiters can manage job postings, review applicants, and communicate hiring decisions. An administrative dashboard provides moderation and platform management capabilities.
 
 ---
 
-## 🏗️ Architectural Overview & Highlights
+## Live Demo
 
-- **Decoupled Client-Server Communication**: Built with a dedicated React client and Express REST API, configured for cross-origin credentials and strict production security measures.
-- **Enterprise Role-Based Access Control (RBAC)**: Secure access gating using JSON Web Tokens (JWT) stored in `HttpOnly` cookie stores with production-ready `SameSite=None` and `Secure=true` headers to defend against CSRF attacks.
-- **Real-Time Synchronous Messaging**: Multi-channel communication layer utilizing WebSockets (`Socket.io`) to stream instant updates directly to users.
-- **Automated Workflows**: Hourly cron-like daemon built using background system loops to automatically evaluate deadlines and suspend expired listings.
-- **Binary Stream Processing**: Document parser configurations using `multer` memory buffers to securely handle PDF CV uploads.
-
----
-
-## 💎 Core Feature Set
-
-### 👨‍🎓 Student / Candidate Portal
-* **Dynamic Profile Management**: Custom university education metrics and comma-separated skills tags.
-* **Smart Resume Uploader**: Fast upload pipeline validating file sizes and parsing PDF streams.
-* **Granular Search & Filters**: Job discovery filters based on technical skills matching, geographic location, salary thresholds, and entry-level specifications.
-* **Instant status tracking**: Keep tabs on application stages (`pending`, `shortlisted`, `interview`, `rejected`) in real-time.
-* **HireFlow AI Assistant**: Chatbot interface integrated with custom backend workflows for smart suggestions.
-
-### 🏢 Recruiter / Corporate Portal
-* **Company Profile Setup**: Dedicated space to configure industry descriptors, external websites, and logo assets.
-* **Job Listing CRUD**: Detailed form controls to post jobs with target parameters and custom deadlines.
-* **Applicant Processing Pipelines**: Structured candidate grids providing single-click resume downloads and application state transitions.
-* **Automated Notification Triggers**: Candidate state transitions automatically fire a dual-notification payload: direct socket push event to the user and an HTML email via SMTP transport.
-
-### 🛡️ Administrative Console
-* **Moderation Panels**: Block or unblock users to enforce code-of-conduct guidelines.
-* **Two-Level Hierarchy**: Gated workflows distinguishing **Super Admins** (who can manage administrative team creation) from **Sub Admins**.
-* **Metrics Dashboard**: Centralized view showcasing aggregate statistics (Students vs Companies ratio, Active/Expired listing counts, and Application queues).
+| Service     | URL                                        |
+| ----------- | ------------------------------------------ |
+| Frontend    | https://hireflow-henna-seven.vercel.app    |
+| Backend API | https://hireflow-backend-rlzu.onrender.com |
 
 ---
 
-## 🛠️ Technology Stack
+## Features
 
-| Component | Technology | Description |
-|---|---|---|
-| **Frontend** | React, React Router 7, Axios, Tailwind CSS | High performance, single-page application dashboard with responsive layout controls. |
-| **Backend** | Node.js, Express.js | Stateless REST API service handling routing, middleware, and services. |
-| **Database** | MySQL | Strongly typed relational schema with transactional integrity and cascade constraints. |
-| **Sockets** | Socket.io | Bi-directional, real-time message exchange client and server gateways. |
-| **Mailing** | Nodemailer | Automated transactional email notifications using SMTP services. |
-| **Auth** | JWT, Cookie-Parser, Bcrypt | Encrypted password storage and token signature verifications. |
+### Candidate
+
+| Feature              | Description                                                              |
+| -------------------- | ------------------------------------------------------------------------ |
+| Authentication       | Secure registration and login using JWT authentication                   |
+| Profile Management   | Create and update professional profiles, education, skills, and resume   |
+| Resume Upload        | Upload PDF resumes with file validation                                  |
+| Job Search           | Search and filter jobs by skills, location, salary, and experience level |
+| Job Applications     | Apply for jobs and manage submitted applications                         |
+| Application Tracking | Track application status (Pending, Shortlisted, Interview, Rejected)     |
+| Notifications        | Receive real-time notifications for application updates                  |
+| AI Assistant         | Interact with the HireFlow AI assistant for career-related assistance    |
+
+### Recruiter
+
+| Feature              | Description                                                                                           |
+| -------------------- | ----------------------------------------------------------------------------------------------------- |
+| Company Profile      | Create and manage company information, website, industry, and logo                                    |
+| Job Management       | Create, edit, delete, and manage job postings                                                         |
+| Applicant Management | Review applications, download resumes, and manage hiring stages                                       |
+| Status Updates       | Update candidate application status throughout the recruitment process                                |
+| Notifications        | Automatically notify candidates via real-time notifications and email when application status changes |
+
+### Administrator
+
+| Feature             | Description                                                                        |
+| ------------------- | ---------------------------------------------------------------------------------- |
+| User Management     | View, block, unblock, and manage platform users                                    |
+| Admin Management    | Super Admin can create and manage Sub Admin accounts                               |
+| Dashboard           | View platform statistics, user counts, active jobs, expired jobs, and applications |
+| Platform Moderation | Monitor and manage platform activities                                             |
 
 ---
 
-## 🚀 Local Quickstart
+## Key Features
+
+* JWT Authentication
+* Role-Based Access Control (Candidate, Recruiter, Admin)
+* Secure Authentication using HttpOnly Cookies
+* Protected Routes
+* Resume Upload with PDF Validation
+* Real-Time Notifications using Socket.io
+* Email Notifications using Nodemailer
+* Automated Job Expiration
+* Job Search & Advanced Filtering
+* Company Profile Management
+* Applicant Tracking System
+* Administrative Dashboard
+* Responsive User Interface
+
+---
+
+## Technology Stack
+
+| Category                    | Technologies                               |
+| --------------------------- | ------------------------------------------ |
+| **Frontend**                | React, React Router 7, Tailwind CSS, Axios |
+| **Backend**                 | Node.js, Express.js                        |
+| **Database**                | MySQL                                      |
+| **Authentication**          | JWT, HttpOnly Cookies, Bcrypt              |
+| **Real-Time Communication** | Socket.io                                  |
+| **File Upload**             | Multer                                     |
+| **Email Service**           | Nodemailer                                 |
+
+---
+
+## System Architecture
+
+* Decoupled React frontend and Express REST API
+* Role-Based Access Control (RBAC)
+* JWT Authentication with HttpOnly Cookies
+* RESTful API Architecture
+* Real-Time Communication using Socket.io
+* Automated background jobs for expired job management
+* Secure PDF resume upload and storage
+* Transactional email notifications
+
+---
+
+
+---
+
+## Getting Started
 
 ### Prerequisites
-- Node.js (v18+)
-- MySQL instance
 
-### Database Initialisation
-Connect to your local MySQL instance and run:
+* Node.js (v18 or later)
+* MySQL Server
+
+### Database Setup
+
+Create a new MySQL database:
+
 ```sql
 CREATE DATABASE hireflow;
 ```
-Import the schema definitions from [db.sql](backend/db.sql) to set up all tables.
 
-### Configure Environment Variables
-Create a `.env` file in your `backend/` folder based on the [backend/.env.example](backend/.env.example) template:
-```ini
+Import the provided `db.sql` file to create all required tables.
+
+---
+
+## Environment Variables
+
+Create a `.env` file inside the **backend** directory.
+
+```env
 PORT=8080
+
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=your_password
 DB_NAME=hireflow
 DB_SSL=false
-JWT_SECRET=your_jwt_signature_secret
-EMAIL_USER=your_smtp_gmail
-EMAIL_PASS=your_gmail_app_password
+
+JWT_SECRET=your_jwt_secret
+
+EMAIL_USER=your_email
+EMAIL_PASS=your_app_password
+
 FRONTEND_URL=http://localhost:5173
 ```
 
-### Install and Run
+---
+
+## Installation
+
+Clone the repository.
+
 ```bash
-# Clone the repository
 git clone https://github.com/Shovon8054/hireflow.git
 cd hireflow
+```
 
-# Setup Backend
+Install backend dependencies.
+
+```bash
 cd backend
 npm install
 npm run dev
+```
 
-# Setup Frontend (in a new terminal tab)
-cd ../frontend
+Open another terminal and start the frontend.
+
+```bash
+cd frontend
 npm install
 npm run dev
 ```
+
+The application will now be available locally.
+
+---
+
+## Project Objectives
+
+HireFlow is designed to simplify the recruitment process by providing an integrated platform for candidates, recruiters, and administrators. The project focuses on secure authentication, efficient hiring workflows, real-time communication, and scalable full-stack architecture.
+
+This project demonstrates practical experience with:
+
+* Full-Stack Web Development
+* RESTful API Design
+* Role-Based Access Control (RBAC)
+* JWT Authentication
+* Secure Cookie-Based Authentication
+* Real-Time Communication with Socket.io
+* File Upload & Validation
+* Email Notification Systems
+* Relational Database Design
+* CRUD Operations
+* Responsive Frontend Development
+* Client–Server Architecture
