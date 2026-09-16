@@ -126,13 +126,11 @@ export const downloadResume = async (req, res) => {
 
 // update application status
 export const updateApplicationStatus = async (req, res) => {
-
     try {
-
         const { status } = req.body;
         const applicationId = req.params.id;
 
-        // Update application status
+        // Update application status in DB
         await db.promise().query(
             `
             UPDATE applications
@@ -143,7 +141,7 @@ export const updateApplicationStatus = async (req, res) => {
         );
 
         // Get student id
-        const [[application]] = await db.promise().query(
+        const [appRows] = await db.promise().query(
             `
             SELECT student_id
             FROM applications
@@ -152,82 +150,89 @@ export const updateApplicationStatus = async (req, res) => {
             [applicationId]
         );
 
-        // Notification title & message
-        let title = "Application Status Updated";
-        let message = `Your application status has been updated to ${status}.`;
+        const application = appRows[0];
 
-        if (status === "shortlisted") {
-            title = "🎉 Congratulations!";
-            message = "Your application has been shortlisted.";
+        if (application && application.student_id) {
+            // Notification title & message
+            let title = "Application Status Updated";
+            let message = `Your application status has been updated to ${status}.`;
+
+            if (status === "shortlisted") {
+                title = "🎉 Congratulations!";
+                message = "Your application has been shortlisted.";
+            } else if (status === "rejected") {
+                title = "Application Update";
+                message = "Unfortunately, your application has not been selected.";
+            } else if (status === "interview") {
+                title = "Interview Invitation";
+                message = "Congratulations! You have been selected for an interview.";
+            }
+
+            // Save in-app notification in DB (safe side effect)
+            try {
+                await createNotification(
+                    application.student_id,
+                    title,
+                    message,
+                    "status"
+                );
+            } catch (notifErr) {
+                console.warn("In-app notification creation error:", notifErr.message);
+            }
+
+            // Send real-time socket notification (safe side effect)
+            try {
+                const io = getIO();
+                if (io) {
+                    io.to(application.student_id.toString()).emit("notification", {
+                        title,
+                        message,
+                        type: "status",
+                    });
+                }
+            } catch (socketErr) {
+                console.warn("Socket emission error:", socketErr.message);
+            }
+
+            // Send email notification (safe side effect)
+            try {
+                const [studentRows] = await db.promise().query(
+                    `
+                    SELECT users.name,
+                        users.email,
+                        jobs.title AS job_title
+                    FROM applications
+                    JOIN users ON applications.student_id = users.id
+                    JOIN jobs ON applications.job_id = jobs.id
+                    WHERE applications.id = ?
+                    `,
+                    [applicationId]
+                );
+
+                const student = studentRows[0];
+                if (student && student.email) {
+                    await sendStatusEmail(
+                        student.email,
+                        student.name,
+                        status,
+                        student.job_title
+                    );
+                }
+            } catch (emailErr) {
+                console.warn("Email delivery error:", emailErr.message);
+            }
         }
 
-        if (status === "rejected") {
-            title = "Application Update";
-            message = "Unfortunately, your application has been rejected.";
-        }
-
-        if (status === "interview") {
-            title = "Interview Invitation";
-            message = "Congratulations! You have been selected for an interview.";
-        }
-
-        // Save notification in DB
-        await createNotification(
-            application.student_id,
-            title,
-            message,
-            "status"
-        );
-
-        // Get student information
-        const [[student]] = await db.promise().query(
-            `
-            SELECT users.name,
-                users.email,
-                jobs.title AS job_title
-
-            FROM applications
-
-            JOIN users
-            ON applications.student_id = users.id
-
-            JOIN jobs
-            ON applications.job_id = jobs.id
-
-            WHERE applications.id = ?
-            `,
-            [applicationId]
-        );
-
-        // Send email
-        await sendStatusEmail(
-            student.email,
-            student.name,
-            status,
-            student.job_title
-        );
-
-        // Send real-time notification
-        const io = getIO();
-
-        io.to(application.student_id.toString()).emit("notification", {
-            title,
-            message,
-            type: "status",
-        });
-
-        res.json({
+        return res.status(200).json({
+            success: true,
             message: "Status updated successfully."
         });
 
     } catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-            message: error.message
+        console.error("updateApplicationStatus Error:", error);
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Failed to update status."
         });
-
     }
-
 };

@@ -31,6 +31,12 @@ import notificationRoutes from "./routes/notification/notification.routes.js";
 // admin
 import adminRoutes from "./routes/admin/admin.routes.js";
 
+// cv analyzer
+import cvRoutes from "./routes/cv/cv.routes.js";
+
+// ai chat
+import chatRoutes from "./routes/chat/chat.routes.js";
+
 
 const app = express();
 
@@ -111,6 +117,12 @@ app.use("/api/notifications", notificationRoutes);
 
 // ====================================================admin=====================================
 app.use("/api/admin", adminRoutes);
+
+// ====================================================cv analyzer===============================
+app.use("/api/cv", cvRoutes);
+
+// ====================================================ai chat===================================
+app.use("/api/chat", chatRoutes);
 
 // test route
 app.get("/", (req, res) => {

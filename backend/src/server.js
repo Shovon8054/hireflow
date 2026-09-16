@@ -28,6 +28,14 @@ setInterval(async () => {
 }, 3600000);
 
 // Start server
+server.on("error", (err) => {
+    if (err.code === "EADDRINUSE") {
+        console.error(`❌ Port ${PORT} is already in use. Please check running processes or choose another port.`);
+    } else {
+        console.error("Server error:", err);
+    }
+});
+
 server.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

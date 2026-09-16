@@ -28,6 +28,7 @@ import Job from "./pages/student-pages/Job";
 import JobDetails from "./pages/student-pages/JobDetails";
 import Chatbot from "./pages/student-pages/Chatbot";
 import ApplicationHistory from "./pages/student-pages/ApplicationHistory";
+import CvAnalyzer from "./pages/student-pages/CvAnalyzer";
 
 // notification
 import Notification from "./pages/student-pages/Notification";
@@ -60,6 +61,8 @@ const App = () => {
         <Route path="/student/job" element={<Job/>} />
         <Route path="/student/jobs/:id" element={<JobDetails/>} />
         <Route path="/student/chatbot" element={<Chatbot/>} />
+        <Route path="/student/cv-analyzer" element={<CvAnalyzer/>} />
+        <Route path="/cv-analyzer" element={<CvAnalyzer/>} />
         <Route path="/student/application-history" element={<ApplicationHistory/>} />
 
         <Route path="/student/notification" element={<Notification/>} />

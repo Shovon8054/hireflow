@@ -1,249 +1,227 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { 
+  Bell, 
+  CheckCheck, 
+  Clock, 
+  Sparkles, 
+  Briefcase, 
+  CheckCircle2, 
+  Info, 
+  ArrowRight,
+  Inbox
+} from "lucide-react";
 import StudentNavbar from "../../components/StudentNavbar";
 import api from "../../services/api";
 
 const Notification = () => {
-    const [notifications, setNotifications] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("all"); // all | unread | read
 
-    useEffect(() => {
-        fetchNotifications();
-    }, []);
+  const fetchNotifications = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get("/notifications");
+      setNotifications(res.data || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const fetchNotifications = async () => {
-        try {
-            const res = await api.get("/notifications");
-            setNotifications(res.data);
-        } catch (err) {
-            console.log(err);
-        } finally {
-            setLoading(false);
-        }
-    };
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
 
-    const markAsRead = async (id) => {
-        try {
-            await api.put(`/notifications/${id}/read`);
+  const markAsRead = async (id) => {
+    try {
+      await api.put(`/notifications/${id}/read`);
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-            setNotifications((prev) =>
-                prev.map((n) =>
-                    n.id === id ? { ...n, is_read: true } : n
-                )
-            );
-        } catch (err) {
-            console.log(err);
-        }
-    };
+  const markAllAsRead = async () => {
+    try {
+      await api.put("/notifications/read-all");
+      setNotifications((prev) =>
+        prev.map((n) => ({ ...n, is_read: true }))
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-    const markAllAsRead = async () => {
-        try {
-            await api.put("/notifications/read-all");
+  const unreadCount = useMemo(
+    () => notifications.filter((n) => !n.is_read).length,
+    [notifications]
+  );
 
-            setNotifications((prev) =>
-                prev.map((n) => ({
-                    ...n,
-                    is_read: true,
-                }))
-            );
-        } catch (err) {
-            console.log(err);
-        }
-    };
+  const filteredNotifications = useMemo(() => {
+    if (filter === "unread") return notifications.filter((n) => !n.is_read);
+    if (filter === "read") return notifications.filter((n) => n.is_read);
+    return notifications;
+  }, [notifications, filter]);
 
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
-            {/* Sticky Navbar */}
-            <div className="sticky top-0 z-50">
-                <StudentNavbar />
+  return (
+    <div className="min-h-screen bg-slate-50 selection:bg-blue-500/20">
+      <StudentNavbar />
+
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+        {/* Clean Standard Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 flex-shrink-0">
+              <Bell className="w-5 h-5" />
             </div>
+            <div>
+              <div className="flex items-center gap-2.5">
+                <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight font-heading">
+                  Notifications
+                </h1>
+                {unreadCount > 0 ? (
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                    {unreadCount} New
+                  </span>
+                ) : (
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    All Caught Up
+                  </span>
+                )}
+              </div>
+              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                Application updates, status changes, and recruiter activity
+              </p>
+            </div>
+          </div>
 
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+          {unreadCount > 0 && (
+            <button
+              onClick={markAllAsRead}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm transition-all active:scale-95 self-start sm:self-auto"
+            >
+              <CheckCheck className="w-4 h-4 text-emerald-400" />
+              <span>Mark All as Read</span>
+            </button>
+          )}
+        </div>
 
-                {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
-                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
-                                Notifications
-                            </h1>
-                            <p className="text-sm text-slate-500 mt-0.5">
-                                {notifications.filter(n => !n.is_read).length} unread • {notifications.length} total
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <button
-                        onClick={markAllAsRead}
-                        disabled={loading || notifications.every(n => n.is_read)}
-                        className="
-                        px-5 py-2.5
-                        bg-slate-900
-                        text-white
-                        text-sm
-                        font-medium
-                        rounded-lg
-                        hover:bg-slate-800
-                        hover:shadow-md
-                        transition-all
-                        duration-200
-                        flex items-center gap-2
-                        whitespace-nowrap
-                        disabled:opacity-50
-                        disabled:cursor-not-allowed
-                        disabled:hover:shadow-none
-                        "
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        Mark All Read
-                    </button>
+        {/* Filter Segmented Control */}
+        <div className="flex items-center gap-1.5 bg-slate-200/70 p-1 rounded-xl w-fit mb-6">
+          <button
+            onClick={() => setFilter("all")}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              filter === "all"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            All ({notifications.length})
+          </button>
+          <button
+            onClick={() => setFilter("unread")}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              filter === "unread"
+                ? "bg-white text-blue-700 shadow-sm"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            Unread ({unreadCount})
+          </button>
+          <button
+            onClick={() => setFilter("read")}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              filter === "read"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            Read ({notifications.length - unreadCount})
+          </button>
+        </div>
+
+        {/* Notifications List / Empty State */}
+        {loading ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="bg-white rounded-2xl p-5 border border-slate-200/80 animate-pulse h-20" />
+            ))}
+          </div>
+        ) : filteredNotifications.length === 0 ? (
+          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-12 text-center max-w-md mx-auto">
+            <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-3 shadow-xs">
+              <Inbox className="w-7 h-7" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900 mb-1 font-heading">
+              {filter === "unread" ? "No unread notifications" : "No notifications yet"}
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              When recruiters review your profile or update the status of an application, notifications will appear here.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {filteredNotifications.map((n) => (
+              <div
+                key={n.id}
+                className={`relative bg-white rounded-2xl border transition-all duration-200 p-4 sm:p-5 flex items-start justify-between gap-4 ${
+                  !n.is_read
+                    ? "border-blue-300 shadow-sm bg-blue-50/20"
+                    : "border-slate-200/80 shadow-xs hover:border-slate-300"
+                }`}
+              >
+                {!n.is_read && (
+                  <div className="absolute top-0 left-0 bottom-0 w-1 bg-blue-600 rounded-l-2xl" />
+                )}
+
+                <div className="flex items-start gap-3.5 min-w-0">
+                  <div
+                    className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                      !n.is_read
+                        ? "bg-blue-600 text-white shadow-xs"
+                        : "bg-slate-100 text-slate-500"
+                    }`}
+                  >
+                    <Briefcase className="w-4 h-4" />
+                  </div>
+
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-slate-900 leading-snug">
+                      {n.message}
+                    </p>
+                    {n.created_at && (
+                      <span className="inline-flex items-center gap-1 text-[11px] text-slate-400 mt-1">
+                        <Clock className="w-3 h-3" />
+                        {new Date(n.created_at).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit"
+                        })}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                {/* Notifications List */}
-                {loading ? (
-                    <div className="text-center py-20">
-                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
-                        <p className="text-sm text-slate-500 mt-3">Loading notifications...</p>
-                    </div>
-                ) : notifications.length === 0 ? (
-                    <div className="text-center py-16 bg-white rounded-2xl border border-slate-200/80">
-                        <div className="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-4">
-                            <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                            </svg>
-                        </div>
-                        <h3 className="text-lg font-semibold text-slate-700 mb-1">
-                            No notifications
-                        </h3>
-                        <p className="text-sm text-slate-500">
-                            You're all caught up! Check back later for updates.
-                        </p>
-                    </div>
-                ) : (
-                    <div className="space-y-4">
-                        {notifications.map((notification) => (
-                            <div
-                                key={notification.id}
-                                className={`bg-white rounded-xl shadow-sm border ${
-                                    notification.is_read
-                                        ? "border-slate-200/80"
-                                        : "border-blue-500/50 shadow-md shadow-blue-500/5"
-                                } hover:shadow-md transition-all duration-300 overflow-hidden`}
-                            >
-                                <div className="p-5 sm:p-6">
-                                    <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                                        {/* Content */}
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex flex-wrap items-center gap-2.5">
-                                                {/* Unread dot */}
-                                                {!notification.is_read && (
-                                                    <span className="flex-shrink-0 w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-                                                )}
-                                                
-                                                {/* Title */}
-                                                <h2 className={`text-base font-semibold ${
-                                                    notification.is_read ? "text-slate-700" : "text-slate-900"
-                                                }`}>
-                                                    {notification.title}
-                                                </h2>
-                                                
-                                                {/* Type badge */}
-                                                <span
-                                                    className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${
-                                                        notification.type === "job"
-                                                            ? "bg-blue-50 text-blue-700 border border-blue-200"
-                                                            : notification.type === "status"
-                                                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                                            : notification.type === "application"
-                                                            ? "bg-amber-50 text-amber-700 border border-amber-200"
-                                                            : "bg-slate-50 text-slate-700 border border-slate-200"
-                                                    }`}
-                                                >
-                                                    {notification.type === "job" && (
-                                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                                        </svg>
-                                                    )}
-                                                    {notification.type === "status" && (
-                                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                        </svg>
-                                                    )}
-                                                    {notification.type === "application" && (
-                                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                        </svg>
-                                                    )}
-                                                    {notification.type}
-                                                </span>
-                                            </div>
-
-                                            {/* Message */}
-                                            <p className={`mt-2 text-sm ${
-                                                notification.is_read ? "text-slate-600" : "text-slate-700"
-                                            } leading-relaxed`}>
-                                                {notification.message}
-                                            </p>
-
-                                            {/* Timestamp */}
-                                            <div className="flex items-center gap-1.5 mt-3">
-                                                <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                                <p className="text-xs text-slate-400">
-                                                    {new Date(notification.created_at).toLocaleString('en-US', {
-                                                        year: 'numeric',
-                                                        month: 'short',
-                                                        day: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        {/* Mark Read Button */}
-                                        {!notification.is_read && (
-                                            <button
-                                                onClick={() => markAsRead(notification.id)}
-                                                className="
-                                                flex-shrink-0
-                                                px-4 py-2
-                                                bg-emerald-50
-                                                text-emerald-700
-                                                text-sm
-                                                font-medium
-                                                rounded-lg
-                                                hover:bg-emerald-100
-                                                hover:shadow-sm
-                                                transition-all
-                                                duration-200
-                                                flex items-center gap-1.5
-                                                self-start
-                                                "
-                                            >
-                                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                </svg>
-                                                Mark Read
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                {!n.is_read && (
+                  <button
+                    onClick={() => markAsRead(n.id)}
+                    className="flex-shrink-0 text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-xl transition-all"
+                  >
+                    Mark read
+                  </button>
                 )}
-            </div>
-        </div>
-    );
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
+  );
 };
 
 export default Notification;
-

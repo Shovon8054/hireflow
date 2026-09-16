@@ -1,214 +1,242 @@
 import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { 
+  User, 
+  GraduationCap, 
+  Building2, 
+  Sparkles, 
+  Edit3, 
+  FileText, 
+  CheckCircle2, 
+  MapPin,
+  ArrowRight,
+  Briefcase
+} from "lucide-react";
 import api from "../services/api";
-import { useNavigate } from "react-router-dom";
-
 import StudentNavbar from "../components/StudentNavbar";
 
 const ShowStudentProfile = () => {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [profile, setProfile] = useState({
+    name: "Student Name",
+    university: "",
+    education: "",
+    skills: ""
+  });
+  const [loading, setLoading] = useState(true);
 
-    const [profile, setProfile] = useState({
-        name: "Student Name",
-        university: "Not Added",
-        education: "Not Added",
-        skills: "Not Added"
-    });
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        const res = await api.get("/profile");
+        if (res.data) {
+          setProfile({
+            name: res.data.name || "Student Name",
+            university: res.data.university || "",
+            education: res.data.education || "",
+            skills: res.data.skills || ""
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
 
-    useEffect(() => {
+  const initials = profile.name
+    ? profile.name.split(" ").slice(0, 2).map((n) => n[0]).join("").toUpperCase()
+    : "S";
 
-        const fetchProfile = async () => {
-            try {
+  // Calculate profile completion percentage
+  const fields = [profile.name, profile.university, profile.education, profile.skills];
+  const filledCount = fields.filter((f) => Boolean(f && f !== "Not Added")).length;
+  const completionPercent = Math.round((filledCount / fields.length) * 100);
 
-                const res = await api.get("/profile");
+  return (
+    <div className="min-h-screen bg-slate-50 selection:bg-blue-500/20">
+      <StudentNavbar />
 
-                if(res.data){
-                    setProfile({
-                        name: res.data.name || "Student Name",
-                        university: res.data.university || "Not Added",
-                        education: res.data.education || "Not Added",
-                        skills: res.data.skills || "Not Added"
-                    });
-                }
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        {/* Main Profile Header Card - Clean Standard SaaS Layout */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 sm:p-8 mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-slate-100">
+            {/* Left: Avatar & Info */}
+            <div className="flex items-center gap-4 sm:gap-5">
+              {/* Circular Avatar */}
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-2xl sm:text-3xl font-heading shadow-md ring-4 ring-blue-50 flex-shrink-0">
+                {initials}
+              </div>
 
-            } catch (err) {
-                console.log(err);
-            }
-        };
-
-        fetchProfile();
-
-    }, []);
-
-
-    return (
-<div className="min-h-screen bg-slate-50">
-    <StudentNavbar />
-
-    <div className="max-w-5xl mx-auto py-8 px-4">
-
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200/80">
-
-            {/* Body */}
-            <div className="px-8 py-8">
-
-
-                {/* Header */}
-                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6 pb-8 border-b border-slate-200/60">
-
-
-                    {/* Left */}
-                    <div className="flex items-center gap-5">
-
-
-                        {/* Avatar */}
-                        <div className="w-20 h-20 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0">
-                            <span className="text-3xl font-semibold text-white tracking-tight">
-                                {profile?.name?.charAt(0).toUpperCase() || "S"}
-                            </span>
-                        </div>
-
-
-
-                        <div>
-                            <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
-                                {profile.name}
-                            </h1>
-                            <p className="text-sm text-slate-500 mt-0.5">
-                                Student • Job Seeker
-                            </p>
-                            <div className="flex items-center gap-3 mt-1.5">
-                                <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-                                    Active
-                                </span>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-
-                    {/* ----------------------------------Button--------------------------------------- */}
-                    <button
-                        onClick={() => navigate("/student/profile")}
-                        className="
-                        px-6 py-2.5
-                        rounded-lg
-                        bg-slate-900
-                        text-white
-                        text-sm
-                        font-medium
-                        hover:bg-slate-800
-                        hover:shadow-md
-                        transition-all
-                        duration-200
-                        flex items-center gap-2
-                        whitespace-nowrap
-                        "
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                        </svg>
-                        Edit Profile
-                    </button>
-
-                    <button
-                        onClick={() => navigate("/student/application-history")}
-                        className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 font-medium shadow"
-                        >
-                        My Applications
-                    </button>
-
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight font-heading">
+                    {profile.name}
+                  </h1>
+                  <CheckCircle2 className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 </div>
+                
+                <p className="text-xs sm:text-sm text-slate-500 font-medium mb-2">
+                  Student • Active Candidate
+                </p>
 
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Open to Opportunities
+                  </span>
 
-
-                {/* Information */}
-                <div className="grid md:grid-cols-2 gap-5 mt-8">
-
-
-                    {/* University */}
-                    <div className="space-y-1.5">
-                        <div className="flex items-center gap-2">
-                            <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
-                            <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
-                                University
-                            </span>
-                        </div>
-                        <p className="text-sm text-slate-800 font-medium">
-                            {profile.university || "Not Added"}
-                        </p>
-                    </div>
-
-
-
-                    {/* Education */}
-                    <div className="space-y-1.5">
-                        <div className="flex items-center gap-2">
-                            <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                            </svg>
-                            <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
-                                Education
-                            </span>
-                        </div>
-                        <p className="text-sm text-slate-800 font-medium">
-                            {profile.education || "Not Added"}
-                        </p>
-                    </div>
-
-
-
-                    {/* Skills - Full Width */}
-                    <div className="md:col-span-2 pt-2 border-t border-slate-200/60 mt-2">
-                        <div className="flex items-center gap-2 mb-3">
-                            <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                            </svg>
-                            <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
-                                Skills
-                            </span>
-                        </div>
-
-                        <div className="flex flex-wrap gap-2">
-                            {profile.skills
-                                ? profile.skills.split(",").map((skill, index) => (
-                                      <span
-                                          key={index}
-                                          className="
-                                          px-3 py-1.5
-                                          rounded-md
-                                          bg-slate-100
-                                          text-slate-700
-                                          text-xs
-                                          font-medium
-                                          border border-slate-200/50
-                                          "
-                                      >
-                                          {skill.trim()}
-                                      </span>
-                                  ))
-                                : (
-                                    <p className="text-sm text-slate-400">
-                                        No skills added
-                                    </p>
-                                  )}
-                        </div>
-                    </div>
-
+                  {profile.university && (
+                    <span className="inline-flex items-center gap-1 text-xs text-slate-500 font-medium">
+                      <Building2 className="w-3.5 h-3.5 text-slate-400" />
+                      <span>{profile.university}</span>
+                    </span>
+                  )}
                 </div>
-
-
+              </div>
             </div>
 
+            {/* Right: Action Buttons */}
+            <div className="flex flex-row sm:flex-col lg:flex-row items-center gap-2.5 self-start sm:self-center">
+              <button
+                onClick={() => navigate("/student/profile")}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-sm transition-all active:scale-95 whitespace-nowrap"
+              >
+                <Edit3 className="w-4 h-4" />
+                <span>Edit Profile</span>
+              </button>
+
+              <Link
+                to="/student/application-history"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all active:scale-95 whitespace-nowrap"
+              >
+                <FileText className="w-4 h-4" />
+                <span>My Applications</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Profile Strength Progress */}
+          <div className="pt-5">
+            <div className="flex items-center justify-between text-xs mb-2">
+              <span className="font-semibold text-slate-600">Profile Completion</span>
+              <span className="font-bold text-blue-600">{completionPercent}%</span>
+            </div>
+            <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-blue-600 rounded-full transition-all duration-500"
+                style={{ width: `${completionPercent}%` }}
+              />
+            </div>
+          </div>
         </div>
 
-    </div>
+        {/* Info Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+          {/* University Card */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                <Building2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  University / College
+                </h3>
+                <p className="text-base font-bold text-slate-900 mt-0.5">
+                  {profile.university || "Not added yet"}
+                </p>
+              </div>
+            </div>
+            {!profile.university && (
+              <button
+                onClick={() => navigate("/student/profile")}
+                className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 mt-2"
+              >
+                <span>Add university</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
 
-</div>
-    );
+          {/* Education / Major Card */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0">
+                <GraduationCap className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Degree & Education
+                </h3>
+                <p className="text-base font-bold text-slate-900 mt-0.5">
+                  {profile.education || "Not added yet"}
+                </p>
+              </div>
+            </div>
+            {!profile.education && (
+              <button
+                onClick={() => navigate("/student/profile")}
+                className="text-xs font-semibold text-purple-600 hover:text-purple-700 flex items-center gap-1 mt-2"
+              >
+                <span>Add education details</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Skills Card */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 sm:p-7">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800">
+                Skills & Technologies
+              </h3>
+            </div>
+            <button
+              onClick={() => navigate("/student/profile")}
+              className="text-xs font-semibold text-blue-600 hover:text-blue-700"
+            >
+              Update Skills
+            </button>
+          </div>
+
+          {profile.skills && profile.skills !== "Not Added" ? (
+            <div className="flex flex-wrap gap-2">
+              {profile.skills.split(",").map((skill, index) => (
+                <span
+                  key={index}
+                  className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                >
+                  {skill.trim()}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-slate-50 border border-slate-200/70 rounded-xl p-5 text-center">
+              <p className="text-xs text-slate-500 mb-2">
+                No skills added yet. Add your skills to get matched with jobs.
+              </p>
+              <button
+                onClick={() => navigate("/student/profile")}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-500 transition-all"
+              >
+                Add Skills
+              </button>
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
 };
 
 export default ShowStudentProfile;

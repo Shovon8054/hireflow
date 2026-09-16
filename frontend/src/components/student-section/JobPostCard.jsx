@@ -1,190 +1,182 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { 
+  MapPin, 
+  DollarSign, 
+  Calendar, 
+  ArrowRight, 
+  Bookmark, 
+  Sparkles, 
+  CheckCircle2, 
+  Building2,
+  Zap,
+  Briefcase,
+  Clock
+} from "lucide-react";
+
+// Consistent gradient generator based on job title
+const getCardGradient = (title = "") => {
+  const gradients = [
+    "from-blue-600 to-indigo-600",
+    "from-indigo-600 to-purple-600",
+    "from-sky-500 to-blue-600",
+    "from-teal-500 to-emerald-600",
+    "from-violet-600 to-indigo-600",
+  ];
+  let hash = 0;
+  for (let i = 0; i < title.length; i++) hash += title.charCodeAt(i);
+  return gradients[hash % gradients.length];
+};
 
 const JobPostCard = ({ job }) => {
-    return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 hover:shadow-lg hover:border-slate-300 transition-all duration-300 overflow-hidden group">
+  const [isSaved, setIsSaved] = useState(false);
 
-    {/* Header */}
-      <div className="p-5 sm:p-6 border-b border-slate-100 bg-gradient-to-r from-slate-50/50 to-white">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                  <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight truncate">
-                      {job.title}
-                  </h2>
-                  <div className="flex items-center gap-2 mt-1.5">
-                      <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      <span className="text-sm text-slate-600 truncate">
-                          {job.location || "Location not specified"}
-                      </span>
-                  </div>
+  const initials = job.title
+    ? job.title.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase()
+    : "HF";
+
+  const gradient = getCardGradient(job.title);
+
+  const skillsList = job.skills
+    ? job.skills.split(",").map((s) => s.trim()).filter(Boolean)
+    : [];
+
+  return (
+    <div className="group relative bg-white rounded-2xl border border-slate-200/90 hover:border-blue-300 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+      {/* Top ambient color accent line */}
+      <div className={`h-1.5 w-full bg-gradient-to-r ${gradient}`} />
+
+      {/* Main Content */}
+      <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
+        <div>
+          {/* Header Row */}
+          <div className="flex items-start justify-between gap-3 mb-4">
+            <div className="flex items-start gap-3.5 min-w-0">
+              {/* Dynamic Company Logo Avatar */}
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-tr ${gradient} flex items-center justify-center text-white font-extrabold text-sm shadow-md shadow-slate-200 flex-shrink-0 group-hover:scale-105 transition-transform duration-200`}>
+                {initials}
               </div>
-              
-              {/* Job Type Badge */}
-              <div className="flex-shrink-0">
-                  {job.is_entry_level ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-200">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                          </svg>
-                          Entry Level
-                      </span>
-                  ) : (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-medium border border-purple-200">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                          </svg>
-                          Experienced
-                      </span>
-                  )}
+
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    VERIFIED EMPLOYER
+                  </span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 tracking-tight leading-snug group-hover:text-blue-600 transition-colors line-clamp-1">
+                  {job.title}
+                </h3>
+                <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
+                  <MapPin className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                  <span className="truncate">{job.location || "Remote / Worldwide"}</span>
+                </div>
               </div>
+            </div>
+
+            {/* Bookmark Action */}
+            <button
+              onClick={() => setIsSaved(!isSaved)}
+              className={`p-2 rounded-xl border transition-all duration-200 flex-shrink-0 active:scale-90 ${
+                isSaved
+                  ? "bg-blue-50 border-blue-200 text-blue-600"
+                  : "bg-slate-50 border-slate-200/80 text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+              }`}
+              title={isSaved ? "Saved to favorites" : "Save job"}
+              aria-label="Save job"
+            >
+              <Bookmark className={`w-4 h-4 ${isSaved ? "fill-current text-blue-600" : ""}`} />
+            </button>
           </div>
+
+          {/* Badges / Highlights */}
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            {job.is_entry_level ? (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200/60">
+                <Zap className="w-3 h-3 text-emerald-500" />
+                Entry Level
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200/70">
+                <Briefcase className="w-3 h-3 text-slate-500" />
+                Full-time
+              </span>
+            )}
+
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200/60">
+              <Sparkles className="w-3 h-3 text-blue-500" />
+              Quick Apply
+            </span>
+          </div>
+
+          {/* Skills Required */}
+          {skillsList.length > 0 && (
+            <div className="mb-5">
+              <div className="flex flex-wrap gap-1.5">
+                {skillsList.slice(0, 4).map((skill, index) => (
+                  <span
+                    key={index}
+                    className="px-2.5 py-1 bg-slate-100/90 hover:bg-blue-50 hover:text-blue-700 text-slate-700 text-xs font-medium rounded-lg transition-colors duration-150 border border-slate-200/60"
+                  >
+                    {skill}
+                  </span>
+                ))}
+                {skillsList.length > 4 && (
+                  <span className="px-2 py-1 text-xs text-slate-400 font-medium self-center">
+                    +{skillsList.length - 4} more
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Salary & Deadline Grid */}
+        <div className="grid grid-cols-2 gap-2.5 pt-4 border-t border-slate-100 text-xs">
+          <div className="bg-slate-50/80 p-2.5 rounded-xl border border-slate-100">
+            <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mb-0.5">
+              Compensation
+            </span>
+            <span className="font-bold text-slate-900 text-xs sm:text-sm">
+              {job.salary_min && job.salary_max
+                ? `$${Number(job.salary_min).toLocaleString()} - $${Number(job.salary_max).toLocaleString()}`
+                : job.salary_min
+                ? `From $${Number(job.salary_min).toLocaleString()}`
+                : job.salary_max
+                ? `Up to $${Number(job.salary_max).toLocaleString()}`
+                : "Competitive Pay"}
+            </span>
+          </div>
+
+          <div className="bg-slate-50/80 p-2.5 rounded-xl border border-slate-100">
+            <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mb-0.5">
+              Apply By
+            </span>
+            <span className="font-medium text-slate-700 text-xs sm:text-sm truncate block">
+              {job.deadline
+                ? new Date(job.deadline).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric"
+                  })
+                : "Rolling admission"}
+            </span>
+          </div>
+        </div>
       </div>
 
-      {/* Body */}
-      <div className="p-5 sm:p-6 space-y-5">
-
-          {/* Skills */}
-          <div>
-              <div className="flex items-center gap-2 mb-2.5">
-                  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                  <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-                      Skills Required
-                  </h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                  {job.skills ? (
-                      job.skills.split(",").map((skill, index) => (
-                          <span
-                              key={index}
-                              className="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-medium rounded-lg hover:bg-slate-200 transition-colors duration-200"
-                          >
-                              {skill.trim()}
-                          </span>
-                      ))
-                  ) : (
-                      <span className="text-sm text-slate-400">
-                          No skills specified
-                      </span>
-                  )}
-              </div>
-          </div>
-
-          {/* Salary + Deadline */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Salary */}
-              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/30 rounded-xl p-4 border border-emerald-100/50">
-                  <div className="flex items-center gap-2 mb-1">
-                      <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span className="text-xs font-medium text-emerald-700 uppercase tracking-wider">
-                          Salary
-                      </span>
-                  </div>
-                  <p className="text-sm font-semibold text-slate-800">
-                      {job.salary_min && job.salary_max
-                          ? `$${job.salary_min} - $${job.salary_max}`
-                          : job.salary_min
-                          ? `From $${job.salary_min}`
-                          : job.salary_max
-                          ? `Up to $${job.salary_max}`
-                          : "Competitive"}
-                  </p>
-              </div>
-
-              {/* Deadline */}
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100/30 rounded-xl p-4 border border-purple-100/50">
-                  <div className="flex items-center gap-2 mb-1">
-                      <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <span className="text-xs font-medium text-purple-700 uppercase tracking-wider">
-                          Deadline
-                      </span>
-                  </div>
-                  <p className="text-sm font-semibold text-slate-800">
-                      {job.deadline
-                          ? new Date(job.deadline).toLocaleDateString(
-                                "en-US",
-                                {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
-                                }
-                            )
-                          : "Not specified"}
-                  </p>
-              </div>
-          </div>
-
-          {/* Job Type - Compact */}
-          <div className="flex items-center justify-between bg-slate-50/80 rounded-xl px-4 py-3 border border-slate-100">
-              <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <span className="text-sm font-medium text-slate-700">
-                      Job Type
-                  </span>
-              </div>
-              {job.is_entry_level ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-medium rounded-lg">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                      Entry Level
-                  </span>
-              ) : (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-purple-50 text-purple-700 text-xs font-medium rounded-lg">
-                      <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
-                      Experienced
-                  </span>
-              )}
-          </div>
-
+      {/* Footer CTA */}
+      <div className="px-5 pb-5 sm:px-6 sm:pb-6 pt-1">
+        <Link
+          to={`/student/jobs/${job.id}`}
+          className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 rounded-xl bg-slate-900 group-hover:bg-blue-600 text-white text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md transition-all duration-200 active:scale-[0.98]"
+        >
+          <span>View Opportunity</span>
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+        </Link>
       </div>
-
-      {/* Footer */}
-      <div className="px-5 sm:px-6 pb-5 sm:pb-6">
-          <Link
-              to={`/student/jobs/${job.id}`}
-              className="
-              w-full
-              flex items-center justify-center gap-2
-              bg-gradient-to-r from-blue-600 to-indigo-600
-              hover:from-blue-700 hover:to-indigo-700
-              text-white
-              py-3
-              rounded-xl
-              font-medium
-              transition-all
-              duration-300
-              group-hover:shadow-md
-              group-hover:scale-[1.02]
-              "
-          >
-              <span>View Details</span>
-              <svg
-                  className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-              >
-                  <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 7l5 5m0 0l-5 5m5-5H6"
-                  />
-              </svg>
-          </Link>
-      </div>
-
-  </div>
-    );
+    </div>
+  );
 };
 
 export default JobPostCard;

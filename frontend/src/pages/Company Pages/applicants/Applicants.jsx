@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../../../services/api";
+import api, { API_URL } from "../../../services/api";
 import CompanyNavbar from "../../../components/CompanyNavbar";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
-
 const Applicants = () => {
 
     const [jobs, setJobs] = useState([]);

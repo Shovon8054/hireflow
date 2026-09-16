@@ -1,9 +1,21 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
+import { 
+  Building2, 
+  LayoutDashboard, 
+  PlusCircle, 
+  Users, 
+  Building, 
+  LogOut, 
+  Menu, 
+  X,
+  Briefcase
+} from "lucide-react";
 import api from "../services/api";
 
 const CompanyNavbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -11,165 +23,148 @@ const CompanyNavbar = () => {
       await api.post("/auth/logout");
       navigate("/");
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      navigate("/");
     }
   };
 
+  const isActive = (path) => location.pathname === path;
+
+  const navLinks = [
+    { name: "Dashboard", path: "/company/dashboard", icon: LayoutDashboard },
+    { name: "Post Job", path: "/company/post-job", icon: PlusCircle },
+    { name: "Applicants", path: "/company/applicants", icon: Users },
+  ];
+
   return (
-    <div>
-      <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/90 border-b border-slate-200/80 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20">
-
-            {/* Logo */}
-            <Link
-              to="/company/dashboard"
-              className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent tracking-tight hover:scale-105 transition-transform duration-300 flex-shrink-0"
-            >
-              HireFlow
-            </Link>
-
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center gap-1 lg:gap-2">
-
-              {/* Dashboard */}
-              <Link
-                to="/company/dashboard"
-                className="px-4 py-2 rounded-lg font-medium text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 transition-all duration-200"
-              >
-                Dashboard
-              </Link>
-
-              {/* Post Job */}
-              <Link
-                to="/company/post-job"
-                className="px-4 py-2 rounded-lg font-medium text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 transition-all duration-200"
-              >
-                Post Job
-              </Link>
-
-              {/* Applicants */}
-              <Link
-                to="/company/applicants"
-                className="px-4 py-2 rounded-lg font-medium text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 transition-all duration-200"
-              >
-                Applicants
-              </Link>
-
-
-              {/* Company Profile */}
-              <Link
-                to="/company/profile"
-                className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-slate-100 transition-all duration-200 mx-1"
-              >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold text-sm shadow-sm">
-                  C
-                </div>
-                <span className="font-medium text-sm text-slate-700">
-                  Company
-                </span>
-              </Link>
-
-              {/* Logout */}
-              <button
-                onClick={handleLogout}
-                className="ml-2 px-5 py-2 rounded-lg bg-red-500 text-white text-sm font-medium shadow-sm hover:bg-red-600 hover:shadow-md transition-all duration-200"
-              >
-                Logout
-              </button>
-
+    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/85 border-b border-slate-200/80 shadow-sm transition-all">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-20">
+          {/* Logo with Brand Emblem */}
+          <Link
+            to="/company/dashboard"
+            className="flex items-center gap-2.5 group"
+          >
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-blue-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform duration-200">
+              <Building2 className="w-5 h-5 text-white" />
             </div>
+            <div className="flex flex-col">
+              <span className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-800 bg-clip-text text-transparent tracking-tight font-heading">
+                HireFlow
+              </span>
+              <span className="text-[10px] uppercase font-bold tracking-widest text-indigo-600 -mt-1 hidden sm:block">
+                Employer Hub
+              </span>
+            </div>
+          </Link>
 
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
-              aria-label="Toggle menu"
-            >
-              <svg className="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {isMobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center gap-1.5 lg:gap-2">
+            {navLinks.map((link) => {
+              const Icon = link.icon;
+              const active = isActive(link.path);
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    active
+                      ? "bg-indigo-50 text-indigo-700 font-semibold shadow-xs"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 ${active ? "text-indigo-600" : "text-slate-500"}`} />
+                  <span>{link.name}</span>
+                </Link>
+              );
+            })}
 
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-slate-200/80 px-4 py-4 space-y-1">
-
-            {/* Dashboard */}
-            <Link
-              to="#"
-              className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 transition-all duration-200"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              </svg>
-              Dashboard
-            </Link>
-
-            {/* Post Job */}
-            <Link
-              to="#"
-              className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 transition-all duration-200"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
-              </svg>
-              Post Job
-            </Link>
-
-            {/* Applicants */}
-            <Link
-              to="#"
-              className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 transition-all duration-200"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              Applicants
-            </Link>
+            <div className="h-5 w-[1px] bg-slate-200 mx-1.5" />
 
             {/* Company Profile */}
             <Link
               to="/company/profile"
-              className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100 transition-all duration-200"
-              onClick={() => setIsMobileMenuOpen(false)}
+              className={`flex items-center gap-2.5 pl-2 pr-3.5 py-1.5 rounded-xl transition-all duration-200 ${
+                isActive("/company/profile") || isActive("/company/profile/update")
+                  ? "bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200"
+                  : "hover:bg-slate-100 text-slate-700"
+              }`}
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold text-sm">
-                C
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold text-xs shadow-sm">
+                <Building className="w-4 h-4" />
               </div>
-              <span className="font-medium text-slate-600">
-                Company Profile
-              </span>
+              <span className="text-sm font-medium">Company Profile</span>
             </Link>
 
             {/* Logout */}
             <button
-              onClick={() => {
-                handleLogout();
-                setIsMobileMenuOpen(false);
-              }}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-red-50 text-red-600 font-medium hover:bg-red-100 transition-all duration-200 mt-2"
+              onClick={handleLogout}
+              className="ml-2 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-slate-600 hover:text-rose-600 hover:bg-rose-50 text-sm font-medium transition-all duration-200"
+              title="Sign Out"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              Logout
+              <LogOut className="w-4 h-4" />
+              <span>Logout</span>
             </button>
-
           </div>
-        )}
-      </nav>
-    </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+            aria-label="Toggle navigation menu"
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu Drawer */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-white/95 backdrop-blur-2xl border-t border-slate-200 px-4 pt-3 pb-5 space-y-1 shadow-xl animate-in slide-in-from-top-2 duration-200">
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+            const active = isActive(link.path);
+            return (
+              <Link
+                key={link.path}
+                to={link.path}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 ${
+                  active
+                    ? "bg-indigo-50 text-indigo-600 font-semibold"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                <span>{link.name}</span>
+              </Link>
+            );
+          })}
+
+          <Link
+            to="/company/profile"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-sm font-medium transition-all"
+          >
+            <Building className="w-5 h-5" />
+            <span>Company Profile</span>
+          </Link>
+
+          <div className="pt-2 border-t border-slate-100 mt-2">
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                handleLogout();
+              }}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-rose-600 bg-rose-50/70 hover:bg-rose-100 text-sm font-medium transition-all"
+            >
+              <LogOut className="w-5 h-5" />
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+      )}
+    </nav>
   );
 };
 

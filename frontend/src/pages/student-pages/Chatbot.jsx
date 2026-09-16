@@ -1,309 +1,338 @@
-// https://n8n.srv1106977.hstgr.cloud/webhook/3628e990-c0e2-40ba-8628-13e0386054cd
-
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { 
+  Bot, 
+  Send, 
+  Sparkles, 
+  User, 
+  Loader2, 
+  FileText, 
+  Briefcase, 
+  MessageSquareQuote,
+  Lightbulb
+} from "lucide-react";
 import StudentNavbar from "../../components/StudentNavbar";
+import api from "../../services/api";
+
+const SUGGESTIONS = [
+  { text: "How can I improve my tech resume?", icon: FileText },
+  { text: "What are the most in-demand web dev skills?", icon: Briefcase },
+  { text: "Tips for acing a behavioral interview", icon: MessageSquareQuote },
+  { text: "How do I stand out as an entry-level candidate?", icon: Lightbulb },
+];
+
+// Helper to format basic markdown (headings, bold, bullets) cleanly
+const formatInline = (str) => {
+  const parts = str.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={i} className="font-semibold text-slate-900">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return part;
+  });
+};
+
+const renderMessageContent = (text, isUser) => {
+  if (!text) return null;
+  if (isUser) {
+    return <p className="whitespace-pre-wrap break-words">{text}</p>;
+  }
+
+  const lines = text.split("\n");
+  return lines.map((line, idx) => {
+    if (line.startsWith("### ")) {
+      return (
+        <h4 key={idx} className="font-bold text-slate-900 text-sm mt-2 mb-1">
+          {line.replace("### ", "")}
+        </h4>
+      );
+    }
+    if (line.startsWith("## ")) {
+      return (
+        <h3 key={idx} className="font-bold text-slate-900 text-sm sm:text-base mt-3 mb-1">
+          {line.replace("## ", "")}
+        </h3>
+      );
+    }
+    if (line.startsWith("# ")) {
+      return (
+        <h2 key={idx} className="font-extrabold text-slate-900 text-base sm:text-lg mt-3 mb-1.5">
+          {line.replace("# ", "")}
+        </h2>
+      );
+    }
+    if (line.startsWith("* ") || line.startsWith("- ")) {
+      return (
+        <div key={idx} className="flex items-start gap-2 my-1 pl-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+          <span className="text-slate-800 leading-relaxed">
+            {formatInline(line.substring(2))}
+          </span>
+        </div>
+      );
+    }
+    if (!line.trim()) {
+      return <div key={idx} className="h-1.5" />;
+    }
+    return (
+      <p key={idx} className="my-0.5 leading-relaxed text-slate-800">
+        {formatInline(line)}
+      </p>
+    );
+  });
+};
 
 const Chatbot = () => {
-    const [message, setMessage] = useState("");
-    const [messages, setMessages] = useState([
-        {
-            sender: "bot",
-            text: "Hello! How can I help you today?"
-        }
-    ]);
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([
+    {
+      sender: "bot",
+      text: "Hello! I'm HireFlow AI, your personal career and recruitment advisor. Ask me anything about resume building, interview preparation, or career growth!",
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    }
+  ]);
+  const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef(null);
 
-    const [loading, setLoading] = useState(false);
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
-    const sendMessage = async () => {
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
 
-        if (!message.trim()) return;
+  const handleSend = async (textToSend = message) => {
+    const query = textToSend.trim();
+    if (!query || loading) return;
 
-        const userMessage = {
-            sender: "user",
-            text: message
-        };
-
-        setMessages(prev => [...prev, userMessage]);
-
-        const currentMessage = message;
-        setMessage("");
-        setLoading(true);
-
-        try {
-
-            const res = await fetch(
-                "https://n8n.srv1106977.hstgr.cloud/webhook/3628e990-c0e2-40ba-8628-13e0386054cd",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        message: currentMessage
-                    })
-                }
-            );
-
-            const data = await res.json();
-
-            setMessages(prev => [
-                ...prev,
-                {
-                    sender: "bot",
-                    text:
-                        data.reply ||
-                        data.output ||
-                        data.response ||
-                        JSON.stringify(data)
-                }
-            ]);
-
-        } catch (err) {
-
-            console.log(err);
-
-            setMessages(prev => [
-                ...prev,
-                {
-                    sender: "bot",
-                    text: "Something went wrong."
-                }
-            ]);
-
-        }
-
-        setLoading(false);
+    const userMessage = {
+      sender: "user",
+      text: query,
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     };
 
-    return (
-<div className="h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-slate-50">
-    {/* Sticky Navbar */}
-    <div className="sticky top-0 z-50 flex-shrink-0">
+    setMessages((prev) => [...prev, userMessage]);
+    setMessage("");
+    setLoading(true);
+
+    try {
+      // Prepare previous conversation history context (excluding greeting if desired or whole turns)
+      const historyPayload = messages.map((m) => ({
+        sender: m.sender,
+        text: m.text,
+      }));
+
+      const res = await api.post("/chat", {
+        message: query,
+        history: historyPayload,
+      });
+
+      const reply =
+        res.data?.reply ||
+        res.data?.output ||
+        res.data?.response ||
+        (typeof res.data === "string" ? res.data : "I'm here to help with your career questions!");
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "bot",
+          text: reply,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ]);
+    } catch (err) {
+      console.error("AI Chatbot Error:", err);
+      const errorMessage =
+        err.response?.data?.reply ||
+        err.response?.data?.message ||
+        "I encountered an issue connecting to the AI career mentor. Please try again shortly.";
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "bot",
+          text: errorMessage,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="h-screen flex flex-col bg-slate-50 overflow-hidden selection:bg-blue-500/20">
+      {/* Sticky Navbar */}
+      <div className="flex-shrink-0 z-50">
         <StudentNavbar />
-    </div>
+      </div>
 
-    {/* Chat Container - Full Screen */}
-    <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
-        <div className="w-full max-w-5xl h-full bg-white rounded-2xl shadow-xl border border-slate-200/80 flex flex-col overflow-hidden">
-
-            {/* Header - Compact */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-4 flex-shrink-0">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm flex-shrink-0">
-                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h1 className="text-base sm:text-lg font-semibold text-white tracking-tight">
-                                HireFlow AI Assistant
-                            </h1>
-                            <p className="text-xs text-blue-100 mt-0.5">
-                                Powered by AI • Ask me anything
-                            </p>
-                        </div>
-                    </div>
-                    
-                    {/* Online Status */}
-                    <div className="flex items-center gap-2">
-                        <span className="relative flex h-2.5 w-2.5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                        </span>
-                        <span className="text-xs text-blue-100 font-medium">Online</span>
-                    </div>
+      {/* Main Chat Workspace */}
+      <main className="flex-1 max-w-5xl w-full mx-auto p-3 sm:p-5 flex flex-col min-h-0">
+        <div className="flex-1 bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col min-h-0 overflow-hidden">
+          
+          {/* Header */}
+          <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between flex-shrink-0 bg-gradient-to-r from-slate-50/70 to-white">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-sm flex-shrink-0">
+                <Bot className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight font-heading">
+                    HireFlow AI Assistant
+                  </h1>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                    AI Advisor
+                  </span>
                 </div>
+                <p className="text-xs text-slate-500">
+                  Real-time career guidance & application optimization
+                </p>
+              </div>
             </div>
 
-            {/* Chat Messages - Full Height */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-slate-50/30 scroll-smooth">
-                {messages.map((msg, index) => (
+            {/* Online Status */}
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span className="hidden sm:inline">Active Online</span>
+            </div>
+          </div>
+
+          {/* Messages Area - Full Height without blocked space */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 scroll-smooth bg-slate-50/30">
+            {messages.map((msg, index) => {
+              const isUser = msg.sender === "user";
+              return (
+                <div key={index}>
+                  <div
+                    className={`flex items-end gap-2.5 ${isUser ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-2 duration-200`}
+                  >
+                    {!isUser && (
+                      <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-xs">
+                        <Sparkles className="w-3.5 h-3.5" />
+                      </div>
+                    )}
+
                     <div
-                        key={index}
-                        className={`flex ${
-                            msg.sender === "user"
-                                ? "justify-end"
-                                : "justify-start"
-                        } animate-fadeIn`}
+                      className={`max-w-[90%] sm:max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
+                        isUser
+                          ? "bg-blue-600 text-white shadow-sm rounded-br-xs"
+                          : "bg-white text-slate-800 border border-slate-200/80 shadow-xs rounded-bl-xs"
+                      }`}
                     >
-                        <div
-                            className={`max-w-[85%] sm:max-w-[70%] px-4 py-3 rounded-2xl ${
-                                msg.sender === "user"
-                                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
-                                    : "bg-white text-slate-800 border border-slate-200/80 shadow-sm"
-                            }`}
+                      {renderMessageContent(msg.text, isUser)}
+
+                      {msg.timestamp && (
+                        <span
+                          className={`block text-[10px] mt-1.5 text-right ${
+                            isUser ? "text-blue-200" : "text-slate-400"
+                          }`}
                         >
-                            {/* Avatar for AI messages */}
-                            {msg.sender === "ai" && (
-                                <div className="flex items-center gap-2 mb-1.5">
-                                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0">
-                                        <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                                        </svg>
-                                    </div>
-                                    <span className="text-xs font-medium text-slate-500">AI Assistant</span>
-                                </div>
-                            )}
-                            
-                            {/* Avatar for user messages */}
-                            {msg.sender === "user" && (
-                                <div className="flex items-center gap-2 mb-1.5 justify-end">
-                                    <span className="text-xs font-medium text-blue-100">You</span>
-                                    <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                                        <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            )}
-
-                            <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
-                                {msg.text}
-                            </p>
-                            
-                            {/* Timestamp */}
-                            {msg.timestamp && (
-                                <p className="text-[10px] opacity-60 mt-1.5 text-right">
-                                    {msg.timestamp}
-                                </p>
-                            )}
-                        </div>
+                          {msg.timestamp}
+                        </span>
+                      )}
                     </div>
-                ))}
 
-                {loading && (
-                    <div className="flex justify-start animate-fadeIn">
-                        <div className="bg-white border border-slate-200/80 shadow-sm px-4 py-3 rounded-2xl">
-                            <div className="flex items-center gap-3">
-                                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0">
-                                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                                    </svg>
-                                </div>
-                                <span className="text-sm text-slate-500">AI is thinking</span>
-                                <span className="flex gap-1.5">
-                                    <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                                    <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                                    <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
+                    {isUser && (
+                      <div className="w-7 h-7 rounded-lg bg-slate-200 flex items-center justify-center text-slate-600 text-xs font-bold flex-shrink-0">
+                        <User className="w-3.5 h-3.5" />
+                      </div>
+                    )}
+                  </div>
 
-            {/* Input Area - Fixed Bottom */}
-            <div className="border-t border-slate-200/80 p-4 bg-white flex-shrink-0">
-                <div className="flex gap-3 max-w-5xl mx-auto">
-                    <div className="relative flex-1">
-                        <input
-                            type="text"
-                            placeholder="Type your message..."
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                            className="
-                            w-full
-                            px-4 py-3
-                            bg-slate-50
-                            border border-slate-200
-                            rounded-xl
-                            text-sm text-slate-800
-                            placeholder:text-slate-400
-                            focus:outline-none
-                            focus:ring-2
-                            focus:ring-blue-500/20
-                            focus:border-blue-500
-                            transition-all
-                            duration-200
-                            pr-12
-                            "
-                        />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                            <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                            </svg>
-                        </div>
+                  {/* Suggested Prompts: Placed naturally inside message feed only on welcome state */}
+                  {index === 0 && messages.length === 1 && (
+                    <div className="pt-4 pl-9 pr-2 animate-in fade-in duration-300">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2.5">
+                        Suggested questions to get started:
+                      </span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl">
+                        {SUGGESTIONS.map((item, i) => {
+                          const Icon = item.icon;
+                          return (
+                            <button
+                              key={i}
+                              onClick={() => handleSend(item.text)}
+                              className="flex items-center gap-2.5 p-3 rounded-xl bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-700 border border-slate-200/80 hover:border-blue-300 text-xs font-medium text-left transition-all shadow-xs group"
+                            >
+                              <Icon className="w-4 h-4 text-blue-500 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                              <span className="leading-snug">{item.text}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                    <button
-                        onClick={sendMessage}
-                        disabled={!message.trim()}
-                        className="
-                        px-6 py-3
-                        bg-gradient-to-r from-blue-600 to-indigo-600
-                        text-white
-                        text-sm
-                        font-medium
-                        rounded-xl
-                        hover:from-blue-700 hover:to-indigo-700
-                        hover:shadow-md
-                        transition-all
-                        duration-200
-                        disabled:opacity-50
-                        disabled:cursor-not-allowed
-                        disabled:hover:shadow-none
-                        flex items-center gap-2
-                        whitespace-nowrap
-                        min-w-[100px]
-                        justify-center
-                        "
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg>
-                        Send
-                    </button>
+                  )}
                 </div>
-            </div>
+              );
+            })}
 
+            {loading && (
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                  <Sparkles className="w-3.5 h-3.5 animate-spin" />
+                </div>
+                <div className="bg-white border border-slate-200/80 shadow-xs rounded-2xl px-4 py-2.5 text-xs text-slate-500 flex items-center gap-2">
+                  <span>AI is thinking</span>
+                  <span className="flex gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: "300ms" }} />
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Clean Bottom Input Bar - 100% Unobstructed */}
+          <div className="p-3 sm:p-4 border-t border-slate-100 bg-white flex-shrink-0">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSend();
+              }}
+              className="flex items-center gap-2"
+            >
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  placeholder="Ask HireFlow AI anything about your career..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  disabled={loading}
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm pl-4 pr-10 py-2.5 sm:py-3 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={!message.trim() || loading}
+                className="p-2.5 sm:p-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white rounded-xl shadow-xs transition-all active:scale-95 flex items-center justify-center flex-shrink-0"
+                aria-label="Send message"
+              >
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Send className="w-5 h-5" />
+                )}
+              </button>
+            </form>
+          </div>
         </div>
+      </main>
     </div>
-
-    {/* CSS Animations */}
-    <style>{`
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .animate-fadeIn {
-            animation: fadeIn 0.25s ease-out;
-        }
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-4px);
-            }
-        }
-        .animate-bounce {
-            animation: bounce 1s infinite;
-        }
-        
-        /* Scrollbar Styling */
-        .overflow-y-auto::-webkit-scrollbar {
-            width: 6px;
-        }
-        .overflow-y-auto::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .overflow-y-auto::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 3px;
-        }
-        .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-    `}</style>
-</div>
-    );
+  );
 };
 
 export default Chatbot;
