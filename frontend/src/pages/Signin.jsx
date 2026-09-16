@@ -33,7 +33,7 @@ const Signin = () => {
 
       // Role-based redirect
       if (user.role === "student") {
-        navigate("/student/job");
+        navigate("/home");
       } else if (user.role === "company") {
         navigate("/company/dashboard");
       } else if (user.role === "admin") {
